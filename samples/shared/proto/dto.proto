@@ -1,0 +1,16 @@
+syntax = "proto3";
+package client;
+
+message DTO {
+  string clientIp = 1;
+  string clientToken = 2;
+  string traceId = 3;
+  uint64 tenantId = 4;
+  string txId = 5;
+}
+
+message Response {
+  bool success = 1;
+  string errCode = 2;
+  string errMessage = 3;
+}

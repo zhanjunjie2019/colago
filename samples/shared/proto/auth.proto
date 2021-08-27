@@ -1,0 +1,29 @@
+syntax = "proto3";
+package client;
+
+import "dto.proto";
+
+message RoleQry{
+  DTO dto = 1;
+  uint64 userId = 2;
+}
+
+message RoleQryResponse{
+  Response rsp = 1;
+  repeated string roles = 2;
+}
+
+message AuthQry{
+  DTO dto = 1;
+  uint64 userId = 2;
+}
+
+message AuthQryResponse{
+  Response rsp = 1;
+  repeated string auths = 2;
+}
+
+service Auth {
+  rpc FindRolesByUserId(RoleQry) returns (RoleQryResponse) {}
+  rpc FindAuthsByUserId(AuthQry) returns (AuthQryResponse) {}
+}

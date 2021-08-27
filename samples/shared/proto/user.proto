@@ -1,0 +1,24 @@
+syntax = "proto3";
+package client;
+
+import "dto.proto";
+
+message UserLoginCmd {
+  DTO dto = 1;
+  string accKey = 2;
+  string password = 3;
+}
+
+message UserLoginResponse{
+  Response rsp = 1;
+  UserLoginData data = 2;
+}
+
+message UserLoginData{
+  string clientToken = 1;
+  uint64 ext = 2;
+}
+
+service User {
+  rpc LoginAction(UserLoginCmd) returns (UserLoginResponse){}
+}

@@ -1,0 +1,4 @@
+{
+  "writer.dsn": "host=localhost user=root password=123456 dbname=colago port=9432 sslmode=disable TimeZone=Asia/Shanghai",
+  "readers.dsn": "host=localhost user=root password=123456 dbname=colago port=9433 sslmode=disable TimeZone=Asia/Shanghai,host=localhost user=root password=123456 dbname=colago port=9434 sslmode=disable TimeZone=Asia/Shanghai"
+}
