@@ -24,14 +24,15 @@ Layer）：主要负责技术细节问题的处理，比如数据库的CRUD、�
 #### 代码包
 
 ```
-colago/common       公用组件，含依赖注入、orm等组件，非必要依赖，可以自己实现
-colago/samples      示例代码包
-colago/shared       含有grpc-proto,以及生成的通用go文件
+colago/common           公用组件，含依赖注入、orm等组件，非必要依赖，可以自己实现
+colago/samples          示例代码包
+colago/shared           含有grpc-proto,以及生成的通用go文件
 colago/user-domain      用户域服务
 colago/auth-domain      权限域服务
 colago/user-client      用户域服务客户端
 colago/auth-client      权限域服务客户端
-colago/test     测试用例执行入口
+colago/docker-compose   测试环境搭建所需的基础设施
+colago/test             测试用例执行入口
 ```
  
 ### 示例领域模型
