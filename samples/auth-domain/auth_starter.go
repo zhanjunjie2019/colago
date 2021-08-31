@@ -5,14 +5,20 @@ import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/app/executor"
+	_ "e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/gatewayimpl"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
+	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"time"
 )
 
 func init() {
 	conf.InitConfig("./config.json")
-	_ = ioc.InjectSimpleBeanFinal()
+	err := ioc.InjectSimpleBeanFinal()
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
 }
 
 func main() {

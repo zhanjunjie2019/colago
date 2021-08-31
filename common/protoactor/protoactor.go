@@ -31,3 +31,14 @@ func InitConsulActor(consulHost string, clusterName string, serverPort int, kind
 	Cluster = cluster.New(system, configure)
 	Cluster.Start()
 }
+
+func InitConsulActorClient(consulHost string, clusterName string, serverPort int) {
+	provider, _ := consul.NewWithConfig(&api.Config{
+		Address: consulHost,
+	})
+
+	remoteCfg := remote.Configure("127.0.0.1", serverPort)
+	configure := cluster.Configure(clusterName, provider, remoteCfg)
+	Cluster = cluster.New(system, configure)
+	Cluster.StartClient()
+}

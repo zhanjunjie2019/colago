@@ -5,6 +5,8 @@ import "encoding/json"
 type TokenData struct {
 	// 租户ID
 	TenantId uint64
+	// 账号ID
+	AccountId uint64
 	// 用户ID
 	UserId uint64
 	// 用户名

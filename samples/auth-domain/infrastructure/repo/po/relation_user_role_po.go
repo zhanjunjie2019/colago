@@ -13,5 +13,5 @@ type RelationUserRole struct {
 }
 
 func (r *RelationUserRole) TableName() string {
-	return "rela_user_role_" + strconv.FormatUint(r.TenantId, 10)
+	return "t" + strconv.FormatUint(r.TenantId, 10) + "_rela_user_role"
 }

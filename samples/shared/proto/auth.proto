@@ -23,7 +23,25 @@ message AuthQryResponse{
   repeated string auths = 2;
 }
 
+message AuthTenantInitCmd {
+  DTO dto = 1;
+  uint64 tenantId = 2;
+}
+
+message CreateAuthCmd {
+  DTO dto = 1;
+  uint64 userId = 2;
+  repeated string roles = 3;
+  repeated string auths = 4;
+}
+
+message AuthResponse{
+  Response rsp = 1;
+}
+
 service Auth {
+  rpc TenantInitAction(AuthTenantInitCmd) returns (AuthResponse) {}
+  rpc CreateAuthAction(CreateAuthCmd) returns (AuthResponse) {}
   rpc FindRolesByUserId(RoleQry) returns (RoleQryResponse) {}
   rpc FindAuthsByUserId(AuthQry) returns (AuthQryResponse) {}
 }

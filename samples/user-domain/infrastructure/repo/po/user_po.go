@@ -19,5 +19,5 @@ type UserInfo struct {
 }
 
 func (u *UserInfo) TableName() string {
-	return "userinfos_" + strconv.FormatUint(u.TenantId, 10)
+	return "t" + strconv.FormatUint(u.TenantId, 10) + "_userinfos"
 }

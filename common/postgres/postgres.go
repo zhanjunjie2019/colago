@@ -4,13 +4,18 @@ import (
 	"e.coding.net/double-j/ego/colago/common/conf"
 	"e.coding.net/double-j/ego/colago/common/dbcli"
 	"e.coding.net/double-j/ego/colago/common/ioc"
+	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"strings"
 )
 
 func init() {
-	_ = ioc.InjectSimpleBean(new(Postgres))
+	err := ioc.InjectSimpleBean(new(Postgres))
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
 }
 
 type Postgres struct {

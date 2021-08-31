@@ -1,12 +1,17 @@
-package entity
+package account
 
 import (
 	"e.coding.net/double-j/ego/colago/common/domain"
 	"e.coding.net/double-j/ego/colago/common/ioc"
+	"fmt"
 )
 
 func init() {
-	_ = ioc.InjectPrototypeBean(new(Account))
+	err := ioc.InjectPrototypeBean(new(Account))
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
 }
 
 type AccountType uint8

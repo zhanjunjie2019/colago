@@ -1,0 +1,41 @@
+@startuml
+namespace UserDomain<<Node>>{
+    namespace UserBoundedContext<<Rectangle>>{
+        class User<<AggregateRoot>>{
+            id          uint64
+            accounts    []Account
+            roles       []string
+            auths       []string
+            +Roles()    []string
+            +Auths()    []string
+            +Create()   error
+        }
+        class Account<<Entity>>{
+            id          uint64
+            accType     AccountType
+            accKey      string
+            password    string
+            enable      bool
+        }
+        User o-- Account
+        User <|-- UserDomain.UserGateway
+        User <|-- UserDomain.AuthGateway
+    }
+    class UserService<<DomainService>>{
+        +LoginAction(dto DTO, accKey string, pwd string) (TokenData, error)
+    }
+    interface UserGateway{
+        +CreateUser(dto DTO, user User) error
+        +FindByAccount(dto DTO, acc *account.Account) (User, error)
+    }
+    interface AccountGateway{
+        +FindAccountByAccKey(dto DTO, accKey string) (Account, error)
+    }
+    interface AuthGateway{
+        +FindRolesByUserId(dto DTO, userId uint64) ([]string, error)
+	    +FindAuthsByUserId(dto DTO, userId uint64) ([]string, error)
+    }
+    UserService <|-- AccountGateway
+    UserService <|-- UserGateway
+}
+@enduml

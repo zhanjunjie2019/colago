@@ -1,0 +1,33 @@
+@startuml
+namespace AuthDomain<<Node>>{
+    namespace AuthBoundedContext<<Rectangle>>{
+        class User<<AggregateRoot>>{
+            id          uint64
+            +Roles()    []Role
+            +Auths()    []Auth
+            +SaveRoleAuth() error
+        }
+        class Role<<ValueObject>>{
+            code string
+        }
+        class Auth<<ValueObject>>{
+            code string
+        }
+        User o-- Role
+        User o-- Auth
+        User <|-- AuthDomain.UserGateway
+        User <|-- AuthDomain.RoleGateway
+        User <|-- AuthDomain.AuthGateway
+    }
+    interface UserGateway{
+    	SaveRoleAuth(dto DTO, user User) error
+    	FindById(dto DTO, userId uint64) (User, error)
+    }
+    interface RoleGateway{
+        FindByUserId(dto DTO, userId uint64) ([]*Role, error)
+    }
+    interface AuthGateway{
+        FindByUserId(dto DTO, userId uint64) ([]*Auth, error)
+    }
+}
+@enduml

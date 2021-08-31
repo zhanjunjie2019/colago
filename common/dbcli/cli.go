@@ -30,16 +30,24 @@ func (cli *DbCli) InsertOne(po model.AbsPO) error {
 	}).Create(po).Error
 }
 
-func (cli *DbCli) FindOne(po model.AbsPO, query interface{}, args ...interface{}) error {
-	return cli.GetReader().Scopes(func(tx *gorm.DB) *gorm.DB {
+func (cli *DbCli) FindOne(po model.AbsPO, query []string, args []interface{}) error {
+	db := cli.GetReader().Scopes(func(tx *gorm.DB) *gorm.DB {
 		return tx.Table(po.TableName())
-	}).Where(query, args).First(po).Error
+	})
+	for i, q := range query {
+		db = db.Where(q, args[i])
+	}
+	return db.First(po).Error
 }
 
-func (cli *DbCli) FindList(po model.AbsPO, dest interface{}, query interface{}, args ...interface{}) error {
-	return cli.GetReader().Scopes(func(tx *gorm.DB) *gorm.DB {
+func (cli *DbCli) FindList(po model.AbsPO, dest interface{}, query []string, args []interface{}) error {
+	db := cli.GetReader().Scopes(func(tx *gorm.DB) *gorm.DB {
 		return tx.Table(po.TableName())
-	}).Where(query, args).Find(dest).Error
+	})
+	for i, q := range query {
+		db = db.Where(q, args[i])
+	}
+	return db.Find(dest).Error
 }
 
 func (cli *DbCli) GetWriter() *gorm.DB {

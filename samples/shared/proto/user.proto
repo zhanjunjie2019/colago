@@ -19,6 +19,32 @@ message UserLoginData{
   uint64 ext = 2;
 }
 
+message UserTenantInitCmd {
+  DTO dto = 1;
+  uint64 tenantId = 2;
+}
+
+message CreateUserCmd {
+  DTO dto = 1;
+  uint32 accType = 2;
+  string accKey = 3;
+  string password = 4;
+  string firstName = 5;
+  string lastName = 6;
+  uint32 age = 7;
+  uint64 birthdayTs = 8;
+  string email = 9;
+  string phoneNumber = 10;
+  repeated string roles = 11;
+  repeated string auths = 12;
+}
+
+message UserResponse{
+  Response rsp = 1;
+}
+
 service User {
+  rpc TenantInitAction(UserTenantInitCmd) returns (UserResponse) {}
+  rpc CreateUserAction(CreateUserCmd) returns (UserResponse) {}
   rpc LoginAction(UserLoginCmd) returns (UserLoginResponse){}
 }

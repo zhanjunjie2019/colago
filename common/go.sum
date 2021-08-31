@@ -1,5 +1,7 @@
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
+e.coding.net/double-j/ego/colago/samples/shared v0.0.0-20210827095909-a8e9259b9218 h1:ztl9R+TPjjJWy5vhdL5N03M4G7b4ohH9HRKlzfxFZaI=
+e.coding.net/double-j/ego/colago/samples/shared v0.0.0-20210827095909-a8e9259b9218/go.mod h1:hhhGyRCc+UJ854Azth74mk+6lPiRsyMhv0UEBOD0AZE=
 github.com/AsynkronIT/protoactor-go v0.0.0-20210819095145-4b4b14c686df h1:d+ECIkhxghu/Jfo2DUXhXKyCts3DyykiXX97xREezrE=
 github.com/AsynkronIT/protoactor-go v0.0.0-20210819095145-4b4b14c686df/go.mod h1:P9K9bUmr1ypSJiUk5NL+jSntjI62o0a/ctLK+Fu5UNc=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=

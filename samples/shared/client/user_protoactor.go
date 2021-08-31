@@ -9,8 +9,8 @@ import (
 
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/cluster"
-	logmod "github.com/AsynkronIT/protoactor-go/log"
 	"github.com/AsynkronIT/protoactor-go/remote"
+	logmod "github.com/AsynkronIT/protoactor-go/log"
 	"github.com/gogo/protobuf/proto"
 )
 
@@ -49,7 +49,10 @@ type User interface {
 	Init(id string)
 	Terminate()
 	ReceiveDefault(ctx actor.Context)
+	TenantInitAction(*UserTenantInitCmd, cluster.GrainContext) (*UserResponse, error)
+	CreateUserAction(*CreateUserCmd, cluster.GrainContext) (*UserResponse, error)
 	LoginAction(*UserLoginCmd, cluster.GrainContext) (*UserLoginResponse, error)
+	
 }
 
 // UserGrainClient holds the base data for the UserGrain
@@ -58,13 +61,71 @@ type UserGrainClient struct {
 	cluster *cluster.Cluster
 }
 
+// TenantInitAction requests the execution on to the cluster with CallOptions
+func (g *UserGrainClient) TenantInitAction(r *UserTenantInitCmd, opts ...*cluster.GrainCallOptions) (*UserResponse, error) {
+	bytes, err := proto.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 0, MessageData: bytes}
+	resp, err := g.cluster.Call(g.ID, "User", reqMsg, opts...)
+	if err != nil {
+		return nil, err
+	}
+	switch msg := resp.(type) {
+	case *cluster.GrainResponse:
+		result := &UserResponse{}
+		err = proto.Unmarshal(msg.MessageData, result)
+		if err != nil {
+			return nil, err
+		}
+		return result, nil
+	case *cluster.GrainErrorResponse:
+		if msg.Code == remote.ResponseStatusCodeDeadLetter.ToInt32() {
+			return nil, remote.ErrDeadLetter
+		}
+		return nil, errors.New(msg.Err)
+	default:
+		return nil, errors.New("unknown response")
+	}
+}
+
+// CreateUserAction requests the execution on to the cluster with CallOptions
+func (g *UserGrainClient) CreateUserAction(r *CreateUserCmd, opts ...*cluster.GrainCallOptions) (*UserResponse, error) {
+	bytes, err := proto.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 1, MessageData: bytes}
+	resp, err := g.cluster.Call(g.ID, "User", reqMsg, opts...)
+	if err != nil {
+		return nil, err
+	}
+	switch msg := resp.(type) {
+	case *cluster.GrainResponse:
+		result := &UserResponse{}
+		err = proto.Unmarshal(msg.MessageData, result)
+		if err != nil {
+			return nil, err
+		}
+		return result, nil
+	case *cluster.GrainErrorResponse:
+		if msg.Code == remote.ResponseStatusCodeDeadLetter.ToInt32() {
+			return nil, remote.ErrDeadLetter
+		}
+		return nil, errors.New(msg.Err)
+	default:
+		return nil, errors.New("unknown response")
+	}
+}
+
 // LoginAction requests the execution on to the cluster with CallOptions
 func (g *UserGrainClient) LoginAction(r *UserLoginCmd, opts ...*cluster.GrainCallOptions) (*UserLoginResponse, error) {
 	bytes, err := proto.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
-	reqMsg := &cluster.GrainRequest{MethodIndex: 0, MessageData: bytes}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 2, MessageData: bytes}
 	resp, err := g.cluster.Call(g.ID, "User", reqMsg, opts...)
 	if err != nil {
 		return nil, err
@@ -86,6 +147,7 @@ func (g *UserGrainClient) LoginAction(r *UserLoginCmd, opts ...*cluster.GrainCal
 		return nil, errors.New("unknown response")
 	}
 }
+
 
 // UserActor represents the actor structure
 type UserActor struct {
@@ -114,6 +176,54 @@ func (a *UserActor) Receive(ctx actor.Context) {
 	case *cluster.GrainRequest:
 		switch msg.MethodIndex {
 		case 0:
+			req := &UserTenantInitCmd{}
+			err := proto.Unmarshal(msg.MessageData, req)
+			if err != nil {
+				plog.Error("TenantInitAction(UserTenantInitCmd) proto.Unmarshal failed.", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			r0, err := a.inner.TenantInitAction(req, ctx)
+			if err != nil {
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			bytes, err := proto.Marshal(r0)
+			if err != nil {
+				plog.Error("TenantInitAction(UserTenantInitCmd) proto.Marshal failed", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			resp := &cluster.GrainResponse{MessageData: bytes}
+			ctx.Respond(resp)
+		case 1:
+			req := &CreateUserCmd{}
+			err := proto.Unmarshal(msg.MessageData, req)
+			if err != nil {
+				plog.Error("CreateUserAction(CreateUserCmd) proto.Unmarshal failed.", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			r0, err := a.inner.CreateUserAction(req, ctx)
+			if err != nil {
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			bytes, err := proto.Marshal(r0)
+			if err != nil {
+				plog.Error("CreateUserAction(CreateUserCmd) proto.Marshal failed", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			resp := &cluster.GrainResponse{MessageData: bytes}
+			ctx.Respond(resp)
+		case 2:
 			req := &UserLoginCmd{}
 			err := proto.Unmarshal(msg.MessageData, req)
 			if err != nil {
@@ -137,7 +247,7 @@ func (a *UserActor) Receive(ctx actor.Context) {
 			}
 			resp := &cluster.GrainResponse{MessageData: bytes}
 			ctx.Respond(resp)
-
+		
 		}
 	default:
 		a.inner.ReceiveDefault(ctx)

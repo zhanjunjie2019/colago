@@ -55,6 +55,11 @@ func GetBean(beanName string) (AbsBean, error) {
 }
 
 func injectSimpleBeanAction(beanName string, obj AbsBean) error {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("BeanName '"+beanName+"' Error", err)
+		}
+	}()
 	obj2 := runNewFunc(obj)
 	if !reflect.DeepEqual(obj, obj2) {
 		obj = obj2
@@ -73,9 +78,11 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 			name = strings.ToUpper(name[0:1]) + name[1:]
 			vp := reflect.ValueOf(obj)
 			method := vp.MethodByName("Set" + name)
+
 			if method.IsZero() {
 				return fmt.Errorf("BeanName '" + beanName + "' Method 'Set" + name + "' is not found")
 			}
+
 			method.Call([]reflect.Value{reflect.ValueOf(bean)})
 		}
 	}

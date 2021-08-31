@@ -49,6 +49,8 @@ type Auth interface {
 	Init(id string)
 	Terminate()
 	ReceiveDefault(ctx actor.Context)
+	TenantInitAction(*AuthTenantInitCmd, cluster.GrainContext) (*AuthResponse, error)
+	CreateAuthAction(*CreateAuthCmd, cluster.GrainContext) (*AuthResponse, error)
 	FindRolesByUserId(*RoleQry, cluster.GrainContext) (*RoleQryResponse, error)
 	FindAuthsByUserId(*AuthQry, cluster.GrainContext) (*AuthQryResponse, error)
 }
@@ -59,13 +61,71 @@ type AuthGrainClient struct {
 	cluster *cluster.Cluster
 }
 
+// TenantInitAction requests the execution on to the cluster with CallOptions
+func (g *AuthGrainClient) TenantInitAction(r *AuthTenantInitCmd, opts ...*cluster.GrainCallOptions) (*AuthResponse, error) {
+	bytes, err := proto.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 0, MessageData: bytes}
+	resp, err := g.cluster.Call(g.ID, "Auth", reqMsg, opts...)
+	if err != nil {
+		return nil, err
+	}
+	switch msg := resp.(type) {
+	case *cluster.GrainResponse:
+		result := &AuthResponse{}
+		err = proto.Unmarshal(msg.MessageData, result)
+		if err != nil {
+			return nil, err
+		}
+		return result, nil
+	case *cluster.GrainErrorResponse:
+		if msg.Code == remote.ResponseStatusCodeDeadLetter.ToInt32() {
+			return nil, remote.ErrDeadLetter
+		}
+		return nil, errors.New(msg.Err)
+	default:
+		return nil, errors.New("unknown response")
+	}
+}
+
+// CreateAuthAction requests the execution on to the cluster with CallOptions
+func (g *AuthGrainClient) CreateAuthAction(r *CreateAuthCmd, opts ...*cluster.GrainCallOptions) (*AuthResponse, error) {
+	bytes, err := proto.Marshal(r)
+	if err != nil {
+		return nil, err
+	}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 1, MessageData: bytes}
+	resp, err := g.cluster.Call(g.ID, "Auth", reqMsg, opts...)
+	if err != nil {
+		return nil, err
+	}
+	switch msg := resp.(type) {
+	case *cluster.GrainResponse:
+		result := &AuthResponse{}
+		err = proto.Unmarshal(msg.MessageData, result)
+		if err != nil {
+			return nil, err
+		}
+		return result, nil
+	case *cluster.GrainErrorResponse:
+		if msg.Code == remote.ResponseStatusCodeDeadLetter.ToInt32() {
+			return nil, remote.ErrDeadLetter
+		}
+		return nil, errors.New(msg.Err)
+	default:
+		return nil, errors.New("unknown response")
+	}
+}
+
 // FindRolesByUserId requests the execution on to the cluster with CallOptions
 func (g *AuthGrainClient) FindRolesByUserId(r *RoleQry, opts ...*cluster.GrainCallOptions) (*RoleQryResponse, error) {
 	bytes, err := proto.Marshal(r)
 	if err != nil {
 		return nil, err
 	}
-	reqMsg := &cluster.GrainRequest{MethodIndex: 0, MessageData: bytes}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 2, MessageData: bytes}
 	resp, err := g.cluster.Call(g.ID, "Auth", reqMsg, opts...)
 	if err != nil {
 		return nil, err
@@ -94,7 +154,7 @@ func (g *AuthGrainClient) FindAuthsByUserId(r *AuthQry, opts ...*cluster.GrainCa
 	if err != nil {
 		return nil, err
 	}
-	reqMsg := &cluster.GrainRequest{MethodIndex: 1, MessageData: bytes}
+	reqMsg := &cluster.GrainRequest{MethodIndex: 3, MessageData: bytes}
 	resp, err := g.cluster.Call(g.ID, "Auth", reqMsg, opts...)
 	if err != nil {
 		return nil, err
@@ -144,6 +204,54 @@ func (a *AuthActor) Receive(ctx actor.Context) {
 	case *cluster.GrainRequest:
 		switch msg.MethodIndex {
 		case 0:
+			req := &AuthTenantInitCmd{}
+			err := proto.Unmarshal(msg.MessageData, req)
+			if err != nil {
+				plog.Error("TenantInitAction(AuthTenantInitCmd) proto.Unmarshal failed.", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			r0, err := a.inner.TenantInitAction(req, ctx)
+			if err != nil {
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			bytes, err := proto.Marshal(r0)
+			if err != nil {
+				plog.Error("TenantInitAction(AuthTenantInitCmd) proto.Marshal failed", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			resp := &cluster.GrainResponse{MessageData: bytes}
+			ctx.Respond(resp)
+		case 1:
+			req := &CreateAuthCmd{}
+			err := proto.Unmarshal(msg.MessageData, req)
+			if err != nil {
+				plog.Error("CreateAuthAction(CreateAuthCmd) proto.Unmarshal failed.", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			r0, err := a.inner.CreateAuthAction(req, ctx)
+			if err != nil {
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			bytes, err := proto.Marshal(r0)
+			if err != nil {
+				plog.Error("CreateAuthAction(CreateAuthCmd) proto.Marshal failed", logmod.Error(err))
+				resp := &cluster.GrainErrorResponse{Err: err.Error()}
+				ctx.Respond(resp)
+				return
+			}
+			resp := &cluster.GrainResponse{MessageData: bytes}
+			ctx.Respond(resp)
+		case 2:
 			req := &RoleQry{}
 			err := proto.Unmarshal(msg.MessageData, req)
 			if err != nil {
@@ -167,7 +275,7 @@ func (a *AuthActor) Receive(ctx actor.Context) {
 			}
 			resp := &cluster.GrainResponse{MessageData: bytes}
 			ctx.Respond(resp)
-		case 1:
+		case 3:
 			req := &AuthQry{}
 			err := proto.Unmarshal(msg.MessageData, req)
 			if err != nil {
