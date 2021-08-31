@@ -38,3 +38,9 @@ colago/test     测试用例执行入口
 ![user-domain.png](doc/user-domain.png)
 ![auth-domain.png](doc/auth-domain.png)
 
+### 示例框架技术栈
+    微服务通信协议 gRPC
+    微服务信箱框架 protoactor
+    服务注册中心 consul
+    数据库 postgresql
+本代码库主要展示代码分层架构与领域驱动设计模型，所有应用技术都是解耦可替换的。
