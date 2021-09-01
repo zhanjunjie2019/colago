@@ -24,10 +24,10 @@ namespace AuthDomain<<Node>>{
     	FindById(dto DTO, userId uint64) (User, error)
     }
     interface RoleGateway{
-        FindByUserId(dto DTO, userId uint64) ([]*Role, error)
+        FindByUserId(dto DTO, userId uint64) ([]Role, error)
     }
     interface AuthGateway{
-        FindByUserId(dto DTO, userId uint64) ([]*Auth, error)
+        FindByUserId(dto DTO, userId uint64) ([]Auth, error)
     }
 }
 @enduml

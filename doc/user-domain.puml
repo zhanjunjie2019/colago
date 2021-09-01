@@ -26,7 +26,7 @@ namespace UserDomain<<Node>>{
     }
     interface UserGateway{
         +CreateUser(dto DTO, user User) error
-        +FindByAccount(dto DTO, acc *account.Account) (User, error)
+        +FindByAccount(dto DTO, acc Account) (User, error)
     }
     interface AccountGateway{
         +FindAccountByAccKey(dto DTO, accKey string) (Account, error)
