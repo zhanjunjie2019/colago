@@ -39,6 +39,9 @@ colago/test             测试用例执行入口
 ![user-domain.png](doc/user-domain.png)
 ![auth-domain.png](doc/auth-domain.png)
 
+### 示例数据库模型
+![db.png](doc/db.png)
+
 ### 示例框架技术栈
     微服务通信协议 gRPC
     微服务信箱框架 protoactor

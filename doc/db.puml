@@ -1,0 +1,53 @@
+@startuml
+package user <<Database>> {
+    class t*_accounts<<Table>> {
+        ID         uint64   `gorm:"primarykey;AUTO_INCREMENT;comment:ID"`
+    	CreateTime int64    `gorm:"autoCreateTime:milli;comment:创建时间"`
+    	UpdateTime int64    `gorm:"autoUpdateTime:milli;comment:修改时间"`
+    	Deleted    uint8    `gorm:"type:int2;default:0;comment:删除标志位"`
+        AccType    uint8    `gorm:"type:int4;comment:账号类型"`
+        AccKey     string   `gorm:"type:varchar256;comment:账号"`
+        Password   string   `gorm:"type:varchar256;comment:密码密文"`
+        Enable     uint8    `gorm:"type:int2;default:1;comment:启用状态"`
+    }
+    class t*_userinfos<<Table>> {
+        ID          uint64    `gorm:"primarykey;AUTO_INCREMENT;comment:ID"`
+        CreateTime  int64     `gorm:"autoCreateTime:milli;comment:创建时间"`
+        UpdateTime  int64     `gorm:"autoUpdateTime:milli;comment:修改时间"`
+        Deleted     uint8     `gorm:"type:int2;default:0;comment:删除标志位"`
+        FirstName   string    `gorm:"type:varchar(256);comment:姓氏"`
+        LastName    string    `gorm:"type:varchar(256);comment:名称"`
+        Age         uint8     `gorm:"type:int4;comment:年龄"`
+        Birthday    time.Time `gorm:"type:date;comment:出生日期"`
+        Email       string    `gorm:"type:varchar(256);comment:邮箱"`
+        PhoneNumber string    `gorm:"type:varchar(256);comment:收集号码"`
+        Status      uint8     `gorm:"type:int2;default:1;comment:状态（0：禁用，1：启用，2：封锁，3：异常审核）"`
+    }
+    class t*_rela_account_user<<Table>> {
+        ID          uint64    `gorm:"primarykey;AUTO_INCREMENT;comment:ID"`
+        CreateTime  int64     `gorm:"autoCreateTime:milli;comment:创建时间"`
+        UpdateTime  int64     `gorm:"autoUpdateTime:milli;comment:修改时间"`
+        Deleted     uint8     `gorm:"type:int2;default:0;comment:删除标志位"`
+	    AccountId   uint64    `gorm:"comment:账号ID"`
+	    UserId      uint64    `gorm:"comment:用户ID"`
+    }
+}
+package auth <<Database>> {
+    class t*_rela_user_auth<<Table>> {
+        ID          uint64    `gorm:"primarykey;AUTO_INCREMENT;comment:ID"`
+        CreateTime  int64     `gorm:"autoCreateTime:milli;comment:创建时间"`
+        UpdateTime  int64     `gorm:"autoUpdateTime:milli;comment:修改时间"`
+        Deleted     uint8     `gorm:"type:int2;default:0;comment:删除标志位"`
+        UserId      uint64    `gorm:"comment:用户ID"`
+        AuthCode    string    `gorm:"type:varchar(64);comment:权限编码"`
+    }
+    class t*_rela_user_role<<Table>> {
+        ID          uint64    `gorm:"primarykey;AUTO_INCREMENT;comment:ID"`
+        CreateTime  int64     `gorm:"autoCreateTime:milli;comment:创建时间"`
+        UpdateTime  int64     `gorm:"autoUpdateTime:milli;comment:修改时间"`
+        Deleted     uint8     `gorm:"type:int2;default:0;comment:删除标志位"`
+        UserId      uint64    `gorm:"comment:用户ID"`
+        RoleCode    string    `gorm:"type:varchar(64);comment:角色编码"`
+    }
+}
+@enduml
