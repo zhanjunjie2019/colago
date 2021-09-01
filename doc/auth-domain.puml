@@ -1,6 +1,6 @@
 @startuml
 namespace AuthDomain<<Node>>{
-    namespace AuthBoundedContext<<Rectangle>>{
+    namespace AuthBoundedContext<<Model>>{
         class User<<AggregateRoot>>{
             id          uint64
             +Roles()    []Role

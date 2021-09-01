@@ -1,6 +1,6 @@
 @startuml
 namespace UserDomain<<Node>>{
-    namespace UserBoundedContext<<Rectangle>>{
+    namespace UserBoundedContext<<Model>>{
         class User<<AggregateRoot>>{
             id          uint64
             accounts    []Account
