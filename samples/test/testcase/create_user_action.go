@@ -4,9 +4,12 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	userclient "e.coding.net/double-j/ego/colago/samples/user-client"
 	"fmt"
+	"strconv"
+	"time"
 )
 
 func CreateUserAction(tenantid uint64) {
+	sns := time.Now().Nanosecond()
 	err := userclient.CreateUserAction(&client.CreateUserCmd{
 		Dto: &client.DTO{
 			TenantId: tenantid,
@@ -27,4 +30,6 @@ func CreateUserAction(tenantid uint64) {
 		fmt.Println("创建新的用户:" + err.Error())
 		panic(err)
 	}
+	ens := time.Now().Nanosecond()
+	fmt.Println("创建新的用户耗时：" + strconv.Itoa((ens-sns)/1000000) + "ms")
 }

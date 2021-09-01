@@ -5,9 +5,12 @@ import (
 	userclient "e.coding.net/double-j/ego/colago/samples/user-client"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
 )
 
 func LoginAction(tenantid uint64) {
+	sns := time.Now().Nanosecond()
 	action, err := userclient.LoginAction(&client.UserLoginCmd{
 		Dto: &client.DTO{
 			TenantId: tenantid,
@@ -21,4 +24,6 @@ func LoginAction(tenantid uint64) {
 	}
 	marshal, _ := json.Marshal(action)
 	fmt.Println(string(marshal))
+	ens := time.Now().Nanosecond()
+	fmt.Println("用户登录行为耗时：" + strconv.Itoa((ens-sns)/1000000) + "ms")
 }
