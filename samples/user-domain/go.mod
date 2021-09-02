@@ -4,8 +4,8 @@ go 1.16
 
 replace (
 	e.coding.net/double-j/ego/colago/common => ../../common
-	e.coding.net/double-j/ego/colago/samples/shared => ../shared
 	e.coding.net/double-j/ego/colago/samples/auth-client => ../auth-client
+	e.coding.net/double-j/ego/colago/samples/shared => ../shared
 )
 
 require (

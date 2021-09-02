@@ -21,9 +21,18 @@ func init() {
 }
 
 type UserGatewayImpl struct {
-	reRepo   *repo.AccountUserRepo `ij:"repo.AccountUserRepo"`
-	userRepo *repo.UserRepo        `ij:"repo.UserRepo"`
-	accRepo  *repo.AccountRepo     `ij:"repo.AccountRepo"`
+	reRepo   *repo.AccountUserRepo  `ij:"repo.AccountUserRepo"`
+	userRepo *repo.UserRepo         `ij:"repo.UserRepo"`
+	accRepo  *repo.AccountRepo      `ij:"repo.AccountRepo"`
+	authcli  *authclient.AuthClient `ij:"authclient.AuthClient"`
+}
+
+func (u *UserGatewayImpl) Authcli() *authclient.AuthClient {
+	return u.authcli
+}
+
+func (u *UserGatewayImpl) SetAuthcli(authcli *authclient.AuthClient) {
+	u.authcli = authcli
 }
 
 func (u *UserGatewayImpl) ReRepo() *repo.AccountUserRepo {
@@ -100,7 +109,7 @@ func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
 	if err != nil {
 		return err
 	}
-	return authclient.CreateRoleAuthCodes(&client.CreateAuthCmd{
+	return u.authcli.CreateRoleAuthCodes(&client.CreateAuthCmd{
 		Dto:    dto,
 		UserId: userPo.ID,
 		Roles:  user.Roles(),

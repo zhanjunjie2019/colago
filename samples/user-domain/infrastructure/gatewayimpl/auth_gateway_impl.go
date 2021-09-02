@@ -16,6 +16,15 @@ func init() {
 }
 
 type AuthGatewayImpl struct {
+	authcli *authclient.AuthClient `ij:"authclient.AuthClient"`
+}
+
+func (a *AuthGatewayImpl) Authcli() *authclient.AuthClient {
+	return a.authcli
+}
+
+func (a *AuthGatewayImpl) SetAuthcli(authcli *authclient.AuthClient) {
+	a.authcli = authcli
 }
 
 func (a *AuthGatewayImpl) New() ioc.AbsBean {
@@ -23,14 +32,14 @@ func (a *AuthGatewayImpl) New() ioc.AbsBean {
 }
 
 func (a *AuthGatewayImpl) FindRolesByUserId(dto *client.DTO, userId uint64) ([]string, error) {
-	return authclient.FindRolesByUserId(&client.RoleQry{
+	return a.authcli.FindRolesByUserId(&client.RoleQry{
 		Dto:    dto,
 		UserId: userId,
 	})
 }
 
 func (a *AuthGatewayImpl) FindAuthsByUserId(dto *client.DTO, userId uint64) ([]string, error) {
-	return authclient.FindAuthsByUserId(&client.AuthQry{
+	return a.authcli.FindAuthsByUserId(&client.AuthQry{
 		Dto:    dto,
 		UserId: userId,
 	})

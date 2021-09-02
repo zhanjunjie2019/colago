@@ -60,11 +60,6 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 			fmt.Println("BeanName '"+beanName+"' Error", err)
 		}
 	}()
-	obj2 := runNewFunc(obj)
-	if !reflect.DeepEqual(obj, obj2) {
-		obj = obj2
-		simpleBeansContext[beanName] = obj2
-	}
 	tp := reflect.TypeOf(obj).Elem()
 	for i := 0; i < tp.NumField(); i++ {
 		field := tp.Field(i)
@@ -85,6 +80,11 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 
 			method.Call([]reflect.Value{reflect.ValueOf(bean)})
 		}
+	}
+	obj2 := runNewFunc(obj)
+	if !reflect.DeepEqual(obj, obj2) {
+		obj = obj2
+		simpleBeansContext[beanName] = obj2
 	}
 	return nil
 }

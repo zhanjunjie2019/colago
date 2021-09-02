@@ -14,5 +14,4 @@ require (
 	e.coding.net/double-j/ego/colago/samples/auth-client v0.0.0-00010101000000-000000000000
 	e.coding.net/double-j/ego/colago/samples/shared v0.0.0-00010101000000-000000000000
 	e.coding.net/double-j/ego/colago/samples/user-client v0.0.0-00010101000000-000000000000
-	github.com/AsynkronIT/protoactor-go v0.0.0-20210819095145-4b4b14c686df
 )

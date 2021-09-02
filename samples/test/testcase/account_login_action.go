@@ -1,17 +1,23 @@
 package testcase
 
 import (
+	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	userclient "e.coding.net/double-j/ego/colago/samples/user-client"
 	"encoding/json"
 	"fmt"
-	"strconv"
 	"time"
 )
 
 func LoginAction(tenantid uint64) {
-	sns := time.Now().Nanosecond()
-	action, err := userclient.LoginAction(&client.UserLoginCmd{
+	bean, err := ioc.GetBean("userclient.UserClient")
+	if err != nil {
+		fmt.Println("创建新的用户:" + err.Error())
+		panic(err)
+	}
+	usercli := bean.(*userclient.UserClient)
+	sns := time.Now()
+	action, err := usercli.LoginAction(&client.UserLoginCmd{
 		Dto: &client.DTO{
 			TenantId: tenantid,
 		},
@@ -24,6 +30,5 @@ func LoginAction(tenantid uint64) {
 	}
 	marshal, _ := json.Marshal(action)
 	fmt.Println(string(marshal))
-	ens := time.Now().Nanosecond()
-	fmt.Println("用户登录行为耗时：" + strconv.Itoa((ens-sns)/1000000) + "ms")
+	fmt.Println("用户登录行为耗时：" + time.Since(sns).String())
 }

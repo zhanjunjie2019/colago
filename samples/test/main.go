@@ -1,9 +1,19 @@
 package main
 
 import (
+	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
 	"e.coding.net/double-j/ego/colago/samples/test/testcase"
+	"fmt"
 )
+
+func init() {
+	err := ioc.InjectSimpleBeanFinal()
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+}
 
 func main() {
 	protoactor.InitConsulActorClient(
@@ -12,7 +22,7 @@ func main() {
 		0,
 	)
 
-	tenantid := uint64(4)
+	tenantid := uint64(2)
 
 	// 用户服务创建新的租户
 	testcase.InitUserTenant(tenantid)
