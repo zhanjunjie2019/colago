@@ -1,4 +1,4 @@
-package sentinuel
+package sentinel
 
 import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
@@ -38,18 +38,26 @@ func (s *Sentinel) Init() {
 	}
 }
 
-func (s *Sentinel) AppendCircuitbreakerRules(role *circuitbreaker.Rule) {
+func (s *Sentinel) AppendCircuitbreakerRules(roles ...*circuitbreaker.Rule) {
 	if s.circuitbreakerRules == nil {
 		s.circuitbreakerRules = make([]*circuitbreaker.Rule, 0)
 	}
-	s.circuitbreakerRules = append(s.circuitbreakerRules, role)
+	if roles != nil {
+		for _, role := range roles {
+			s.circuitbreakerRules = append(s.circuitbreakerRules, role)
+		}
+	}
 }
 
-func (s *Sentinel) AppendHotspotRules(role *hotspot.Rule) {
+func (s *Sentinel) AppendHotspotRules(roles ...*hotspot.Rule) {
 	if s.hotspotRule == nil {
 		s.hotspotRule = make([]*hotspot.Rule, 0)
 	}
-	s.hotspotRule = append(s.hotspotRule, role)
+	if roles != nil {
+		for _, role := range roles {
+			s.hotspotRule = append(s.hotspotRule, role)
+		}
+	}
 }
 
 func (s *Sentinel) LoadRules() error {
@@ -64,17 +72,13 @@ func (s *Sentinel) LoadRules() error {
 func (s *Sentinel) Entry(
 	resource string,
 	tryFn func() (interface{}, error),
-	catchFn func(interface{}) (interface{}, error),
 	args ...interface{},
-) (rs interface{}, err error) {
+) (interface{}, error) {
 	e, b := sentinel.Entry(resource, sentinel.WithArgs(args))
 	if b != nil {
-		return catchFn(NewSentinelError(resource))
+		panic(NewSentinelError(resource))
 	} else {
 		defer func() {
-			if recoverErr := recover(); recoverErr != nil {
-				rs, err = catchFn(recoverErr)
-			}
 			e.Exit()
 		}()
 		return tryFn()

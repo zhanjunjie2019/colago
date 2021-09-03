@@ -4,6 +4,7 @@ import (
 	"e.coding.net/double-j/ego/colago/common/conf"
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
+	"e.coding.net/double-j/ego/colago/common/sentinel"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/app/executor"
 	_ "e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/gatewayimpl"
@@ -34,6 +35,8 @@ func main() {
 			},
 		},
 	)
+
+	protoactor.InitClientFilters(sentinel.SentinuelActorChainFactory)
 
 	select {}
 }

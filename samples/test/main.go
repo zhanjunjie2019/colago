@@ -3,6 +3,7 @@ package main
 import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
+	"e.coding.net/double-j/ego/colago/common/sentinel"
 	"e.coding.net/double-j/ego/colago/samples/test/testcase"
 	"fmt"
 )
@@ -22,7 +23,9 @@ func main() {
 		0,
 	)
 
-	tenantid := uint64(3)
+	protoactor.InitClientFilters(sentinel.SentinuelActorChainFactory)
+
+	tenantid := uint64(4)
 
 	// 用户服务创建新的租户
 	testcase.InitUserTenant(tenantid)
