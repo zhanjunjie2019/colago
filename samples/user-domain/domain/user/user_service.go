@@ -20,24 +20,8 @@ func init() {
 }
 
 type UserService struct {
-	accountGateway account.AccountGateway `ij:"gatewayimpl.AccountGatewayImpl"`
-	userGateway    UserGateway            `ij:"gatewayimpl.UserGatewayImpl"`
-}
-
-func (u *UserService) UserGateway() UserGateway {
-	return u.userGateway
-}
-
-func (u *UserService) SetUserGateway(userGateway UserGateway) {
-	u.userGateway = userGateway
-}
-
-func (u *UserService) AccountGateway() account.AccountGateway {
-	return u.accountGateway
-}
-
-func (u *UserService) SetAccountGateway(accountGateway account.AccountGateway) {
-	u.accountGateway = accountGateway
+	AccountGateway account.AccountGateway `ij:"gatewayimpl.AccountGatewayImpl"`
+	UserGateway    UserGateway            `ij:"gatewayimpl.UserGatewayImpl"`
 }
 
 func (u *UserService) New() ioc.AbsBean {
@@ -45,7 +29,7 @@ func (u *UserService) New() ioc.AbsBean {
 }
 
 func (u *UserService) LoginAction(dto *client.DTO, accKey string, pwd string) (*model.TokenData, error) {
-	acc, err := u.accountGateway.FindAccountByAccKey(dto, accKey)
+	acc, err := u.AccountGateway.FindAccountByAccKey(dto, accKey)
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +37,7 @@ func (u *UserService) LoginAction(dto *client.DTO, accKey string, pwd string) (*
 		return nil, fmt.Errorf("账号状态异常")
 	}
 	if strings.EqualFold(codec.ToSHA1(pwd), acc.Password()) {
-		user, err := u.userGateway.FindByAccount(dto, acc)
+		user, err := u.UserGateway.FindByAccount(dto, acc)
 		if err != nil {
 			return nil, err
 		}

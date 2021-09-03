@@ -16,15 +16,7 @@ func init() {
 }
 
 type UserRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (u *UserRepo) Postgres() *postgres.Postgres {
-	return u.postgres
-}
-
-func (u *UserRepo) SetPostgres(postgres *postgres.Postgres) {
-	u.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (u *UserRepo) New() ioc.AbsBean {
@@ -32,13 +24,13 @@ func (u *UserRepo) New() ioc.AbsBean {
 }
 
 func (u *UserRepo) InsertOne(userPo *po.UserInfo) (*po.UserInfo, error) {
-	return userPo, u.postgres.InsertOne(userPo)
+	return userPo, u.Postgres.InsertOne(userPo)
 }
 
 func (u *UserRepo) FindById(tenantId uint64, userId uint64) (*po.UserInfo, error) {
 	user := &po.UserInfo{
 		TenantId: tenantId,
 	}
-	err := u.postgres.FindOne(user, []string{"id=?", "deleted=?"}, []interface{}{userId, 0})
+	err := u.Postgres.FindOne(user, []string{"id=?", "deleted=?"}, []interface{}{userId, 0})
 	return user, err
 }

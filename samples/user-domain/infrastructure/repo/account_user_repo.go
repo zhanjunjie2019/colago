@@ -16,15 +16,7 @@ func init() {
 }
 
 type AccountUserRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (a *AccountUserRepo) Postgres() *postgres.Postgres {
-	return a.postgres
-}
-
-func (a *AccountUserRepo) SetPostgres(postgres *postgres.Postgres) {
-	a.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (a *AccountUserRepo) New() ioc.AbsBean {
@@ -33,7 +25,7 @@ func (a *AccountUserRepo) New() ioc.AbsBean {
 
 func (a *AccountUserRepo) InsertBatch(rePos []*po.RelationAccountUser) ([]*po.RelationAccountUser, error) {
 	for _, rePo := range rePos {
-		err := a.postgres.InsertOne(rePo)
+		err := a.Postgres.InsertOne(rePo)
 		if err != nil {
 			return nil, err
 		}
@@ -45,6 +37,6 @@ func (a *AccountUserRepo) FindByAccountId(tenantId uint64, accId uint64) (*po.Re
 	r := &po.RelationAccountUser{
 		TenantId: tenantId,
 	}
-	err := a.postgres.FindOne(r, []string{"account_id=?", "deleted=?"}, []interface{}{accId, 0})
+	err := a.Postgres.FindOne(r, []string{"account_id=?", "deleted=?"}, []interface{}{accId, 0})
 	return r, err
 }

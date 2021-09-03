@@ -31,8 +31,8 @@ type User struct {
 	status      uint8
 	roles       []string
 	auths       []string
-	userGateway UserGateway      `ij:"gatewayimpl.UserGatewayImpl"`
-	authGateway auth.AuthGateway `ij:"gatewayimpl.AuthGatewayImpl"`
+	UserGateway UserGateway      `ij:"gatewayimpl.UserGatewayImpl"`
+	AuthGateway auth.AuthGateway `ij:"gatewayimpl.AuthGatewayImpl"`
 	dto         *client.DTO
 }
 
@@ -106,7 +106,7 @@ func (u *User) SetStatus(status uint8) {
 
 func (u *User) Roles() []string {
 	if u.roles == nil {
-		roles, err := u.authGateway.FindRolesByUserId(u.dto, u.Id())
+		roles, err := u.AuthGateway.FindRolesByUserId(u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -122,7 +122,7 @@ func (u *User) SetRoles(roles []string) {
 
 func (u *User) Auths() []string {
 	if u.auths == nil {
-		auths, err := u.authGateway.FindAuthsByUserId(u.dto, u.Id())
+		auths, err := u.AuthGateway.FindAuthsByUserId(u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -134,22 +134,6 @@ func (u *User) Auths() []string {
 
 func (u *User) SetAuths(auths []string) {
 	u.auths = auths
-}
-
-func (u *User) UserGateway() UserGateway {
-	return u.userGateway
-}
-
-func (u *User) SetUserGateway(userGateway UserGateway) {
-	u.userGateway = userGateway
-}
-
-func (u *User) AuthGateway() auth.AuthGateway {
-	return u.authGateway
-}
-
-func (u *User) SetAuthGateway(authActuator auth.AuthGateway) {
-	u.authGateway = authActuator
 }
 
 func (u *User) Dto() *client.DTO {
@@ -164,5 +148,5 @@ func (u *User) Create() error {
 	for _, a := range u.accounts {
 		a.SetPassword(codec.ToSHA1(a.Password()))
 	}
-	return u.userGateway.CreateUser(u.dto, u)
+	return u.UserGateway.CreateUser(u.dto, u)
 }

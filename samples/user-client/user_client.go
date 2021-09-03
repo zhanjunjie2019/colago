@@ -21,11 +21,11 @@ func init() {
 }
 
 type UserClient struct {
-	sent *sentinuel.Sentinel `ij:"sentinuel.Sentinel"`
+	Sent *sentinuel.Sentinel `ij:"sentinuel.Sentinel"`
 }
 
 func (u *UserClient) New() ioc.AbsBean {
-	u.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	u.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "User.InitAuthTenant",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -33,7 +33,7 @@ func (u *UserClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	u.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	u.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "User.CreateUserAction",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -41,7 +41,7 @@ func (u *UserClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	u.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	u.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "User.LoginAction",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -49,12 +49,12 @@ func (u *UserClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	u.sent.LoadRules()
+	u.Sent.LoadRules()
 	return u
 }
 
 func (u *UserClient) InitUserTenant(dto *client.UserTenantInitCmd) error {
-	_, err := u.sent.Entry(
+	_, err := u.Sent.Entry(
 		"User.InitAuthTenant",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
@@ -81,7 +81,7 @@ func (u *UserClient) InitUserTenant(dto *client.UserTenantInitCmd) error {
 }
 
 func (u *UserClient) CreateUserAction(dto *client.CreateUserCmd) error {
-	_, err := u.sent.Entry(
+	_, err := u.Sent.Entry(
 		"User.CreateUserAction",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
@@ -108,7 +108,7 @@ func (u *UserClient) CreateUserAction(dto *client.CreateUserCmd) error {
 }
 
 func (u *UserClient) LoginAction(dto *client.UserLoginCmd) (*client.UserLoginData, error) {
-	rs, err := u.sent.Entry(
+	rs, err := u.Sent.Entry(
 		"User.LoginAction",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)

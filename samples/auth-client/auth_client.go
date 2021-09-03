@@ -21,19 +21,11 @@ func init() {
 }
 
 type AuthClient struct {
-	sent *sentinuel.Sentinel `ij:"sentinuel.Sentinel"`
-}
-
-func (a *AuthClient) Sent() *sentinuel.Sentinel {
-	return a.sent
-}
-
-func (a *AuthClient) SetSent(sent *sentinuel.Sentinel) {
-	a.sent = sent
+	Sent *sentinuel.Sentinel `ij:"sentinuel.Sentinel"`
 }
 
 func (a *AuthClient) New() ioc.AbsBean {
-	a.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	a.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "Auth.InitAuthTenant",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -41,7 +33,7 @@ func (a *AuthClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	a.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	a.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "Auth.CreateRoleAuthCodes",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -49,7 +41,7 @@ func (a *AuthClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	a.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	a.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "Auth.FindRolesByUserId",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -57,7 +49,7 @@ func (a *AuthClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	a.sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
+	a.Sent.AppendCircuitbreakerRules(&circuitbreaker.Rule{
 		Resource:         "Auth.FindAuthsByUserId",
 		Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 		RetryTimeoutMs:   3000,                      // 熔断后3秒重试
@@ -65,12 +57,12 @@ func (a *AuthClient) New() ioc.AbsBean {
 		StatIntervalMs:   5000,                      // 单位时间为5秒
 		Threshold:        10,                        // 单位时间内容错数量
 	})
-	a.sent.LoadRules()
+	a.Sent.LoadRules()
 	return a
 }
 
 func (a *AuthClient) InitAuthTenant(dto *client.AuthTenantInitCmd) error {
-	_, err := a.sent.Entry(
+	_, err := a.Sent.Entry(
 		"Auth.InitAuthTenant",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
@@ -97,7 +89,7 @@ func (a *AuthClient) InitAuthTenant(dto *client.AuthTenantInitCmd) error {
 }
 
 func (a *AuthClient) CreateRoleAuthCodes(dto *client.CreateAuthCmd) error {
-	_, err := a.sent.Entry(
+	_, err := a.Sent.Entry(
 		"Auth.CreateRoleAuthCodes",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
@@ -124,7 +116,7 @@ func (a *AuthClient) CreateRoleAuthCodes(dto *client.CreateAuthCmd) error {
 }
 
 func (a *AuthClient) FindRolesByUserId(dto *client.RoleQry) ([]string, error) {
-	rs, err := a.sent.Entry(
+	rs, err := a.Sent.Entry(
 		"Auth.FindRolesByUserId",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
@@ -154,7 +146,7 @@ func (a *AuthClient) FindRolesByUserId(dto *client.RoleQry) ([]string, error) {
 }
 
 func (a *AuthClient) FindAuthsByUserId(dto *client.AuthQry) ([]string, error) {
-	rs, err := a.sent.Entry(
+	rs, err := a.Sent.Entry(
 		"Auth.FindAuthsByUserId",
 		func() (interface{}, error) {
 			callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)

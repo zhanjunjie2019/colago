@@ -31,31 +31,15 @@ func NewUserAppExe() client.User {
 }
 
 type UserAppExe struct {
-	userService *user.UserService `ij:"user.UserService"`
-	tenantRepo  *repo.TenantRepo  `ij:"repo.TenantRepo"`
-}
-
-func (u *UserAppExe) TenantRepo() *repo.TenantRepo {
-	return u.tenantRepo
-}
-
-func (u *UserAppExe) SetTenantRepo(tenantRepo *repo.TenantRepo) {
-	u.tenantRepo = tenantRepo
-}
-
-func (u *UserAppExe) UserService() *user.UserService {
-	return u.userService
-}
-
-func (u *UserAppExe) SetUserService(userService *user.UserService) {
-	u.userService = userService
+	UserService *user.UserService `ij:"user.UserService"`
+	TenantRepo  *repo.TenantRepo  `ij:"repo.TenantRepo"`
 }
 
 func (u *UserAppExe) New() ioc.AbsBean {
 	return u
 }
 
-func (u *UserAppExe) Init(id string) {
+func (u *UserAppExe) Init(string) {
 }
 
 func (u *UserAppExe) Terminate() {
@@ -71,7 +55,7 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 		}
 	}()
 	response := new(client.UserResponse)
-	err := u.tenantRepo.TenantInitAction(cmd.TenantId)
+	err := u.TenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -83,7 +67,6 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 	response.Rsp = &client.Response{
 		Success: true,
 	}
-
 	return response, nil
 }
 
@@ -116,7 +99,6 @@ func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, context cluster
 		response.Rsp = &client.Response{
 			Success: true,
 		}
-
 	}
 	return response, nil
 }
@@ -131,8 +113,7 @@ func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, context cluster.Grain
 	key := cmd.AccKey
 	password := cmd.Password
 	response := new(client.UserLoginResponse)
-
-	token, err := u.userService.LoginAction(dto, key, password)
+	token, err := u.UserService.LoginAction(dto, key, password)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,

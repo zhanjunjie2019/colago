@@ -16,15 +16,7 @@ func init() {
 }
 
 type UserRoleRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (u *UserRoleRepo) Postgres() *postgres.Postgres {
-	return u.postgres
-}
-
-func (u *UserRoleRepo) SetPostgres(postgres *postgres.Postgres) {
-	u.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (u *UserRoleRepo) New() ioc.AbsBean {
@@ -33,7 +25,7 @@ func (u *UserRoleRepo) New() ioc.AbsBean {
 
 func (u *UserRoleRepo) InsertBatch(rePos []*po.RelationUserRole) ([]*po.RelationUserRole, error) {
 	for _, rePo := range rePos {
-		err := u.postgres.InsertOne(rePo)
+		err := u.Postgres.InsertOne(rePo)
 		if err != nil {
 			return nil, err
 		}
@@ -46,6 +38,6 @@ func (u *UserRoleRepo) ListByUserId(tenantId uint64, userId uint64) ([]*po.Relat
 		TenantId: tenantId,
 	}
 	roles := make([]*po.RelationUserRole, 0)
-	err := u.postgres.FindList(r, &roles, []string{"user_id=?", "deleted=?"}, []interface{}{userId, 0})
+	err := u.Postgres.FindList(r, &roles, []string{"user_id=?", "deleted=?"}, []interface{}{userId, 0})
 	return roles, err
 }

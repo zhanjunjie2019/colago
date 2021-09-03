@@ -30,31 +30,15 @@ func NewAuthAppExe() client.Auth {
 }
 
 type AuthAppExe struct {
-	userGateway user.UserGateway `ij:"gatewayimpl.UserGatewayImpl"`
-	tenantRepo  *repo.TenantRepo `ij:"repo.TenantRepo"`
-}
-
-func (a *AuthAppExe) TenantRepo() *repo.TenantRepo {
-	return a.tenantRepo
-}
-
-func (a *AuthAppExe) SetTenantRepo(tenantRepo *repo.TenantRepo) {
-	a.tenantRepo = tenantRepo
-}
-
-func (a *AuthAppExe) UserGateway() user.UserGateway {
-	return a.userGateway
-}
-
-func (a *AuthAppExe) SetUserGateway(userGateway user.UserGateway) {
-	a.userGateway = userGateway
+	UserGateway user.UserGateway `ij:"gatewayimpl.UserGatewayImpl"`
+	TenantRepo  *repo.TenantRepo `ij:"repo.TenantRepo"`
 }
 
 func (a *AuthAppExe) New() ioc.AbsBean {
 	return a
 }
 
-func (a *AuthAppExe) Init(id string) {
+func (a *AuthAppExe) Init(string) {
 }
 
 func (a *AuthAppExe) Terminate() {
@@ -70,7 +54,7 @@ func (a *AuthAppExe) TenantInitAction(cmd *client.AuthTenantInitCmd, context clu
 		}
 	}()
 	response := new(client.AuthResponse)
-	err := a.tenantRepo.TenantInitAction(cmd.TenantId)
+	err := a.TenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -97,7 +81,7 @@ func (a *AuthAppExe) CreateAuthAction(cmd *client.CreateAuthCmd, context cluster
 	roles := cmd.Roles
 	auths := cmd.Auths
 	response := new(client.AuthResponse)
-	u, err := a.userGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -152,7 +136,7 @@ func (a *AuthAppExe) FindRolesByUserId(qry *client.RoleQry, context cluster.Grai
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.RoleQryResponse)
-	u, err := a.userGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -183,7 +167,7 @@ func (a *AuthAppExe) FindAuthsByUserId(qry *client.AuthQry, context cluster.Grai
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.AuthQryResponse)
-	u, err := a.userGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,

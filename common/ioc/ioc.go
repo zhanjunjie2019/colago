@@ -60,8 +60,9 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 			fmt.Println("BeanName '"+beanName+"' Error", err)
 		}
 	}()
-	tp := reflect.TypeOf(obj).Elem()
-	for i := 0; i < tp.NumField(); i++ {
+	vp := reflect.ValueOf(obj).Elem()
+	tp := vp.Type()
+	for i := 0; i < vp.NumField(); i++ {
 		field := tp.Field(i)
 		tag := field.Tag.Get("ij")
 		if tag != "" {
@@ -69,16 +70,7 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 			if err != nil {
 				return err
 			}
-			name := field.Name
-			name = strings.ToUpper(name[0:1]) + name[1:]
-			vp := reflect.ValueOf(obj)
-			method := vp.MethodByName("Set" + name)
-
-			if method.IsZero() {
-				return fmt.Errorf("BeanName '" + beanName + "' Method 'Set" + name + "' is not found")
-			}
-
-			method.Call([]reflect.Value{reflect.ValueOf(bean)})
+			vp.FieldByName(field.Name).Set(reflect.ValueOf(bean))
 		}
 	}
 	obj2 := runNewFunc(obj)
@@ -100,13 +92,7 @@ func getPrototypeBean(beanName string) (AbsBean, error) {
 			if err != nil {
 				return nil, err
 			}
-			name := field.Name
-			name = strings.ToUpper(name[0:1]) + name[1:]
-			method := vp.MethodByName("Set" + name)
-			if method.IsZero() {
-				return nil, fmt.Errorf("BeanName '" + beanName + "' Method 'Set" + name + "' is not found")
-			}
-			method.Call([]reflect.Value{reflect.ValueOf(bean)})
+			vp.Elem().FieldByName(field.Name).Set(reflect.ValueOf(bean))
 		}
 	}
 	return runNewFunc(vp.Interface().(AbsBean)), nil

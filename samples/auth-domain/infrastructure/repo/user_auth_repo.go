@@ -16,15 +16,7 @@ func init() {
 }
 
 type UserAuthRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (u *UserAuthRepo) Postgres() *postgres.Postgres {
-	return u.postgres
-}
-
-func (u *UserAuthRepo) SetPostgres(postgres *postgres.Postgres) {
-	u.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (u *UserAuthRepo) New() ioc.AbsBean {
@@ -33,7 +25,7 @@ func (u *UserAuthRepo) New() ioc.AbsBean {
 
 func (u *UserAuthRepo) InsertBatch(rePos []*po.RelationUserAuth) ([]*po.RelationUserAuth, error) {
 	for _, rePo := range rePos {
-		err := u.postgres.InsertOne(rePo)
+		err := u.Postgres.InsertOne(rePo)
 		if err != nil {
 			return nil, err
 		}
@@ -46,6 +38,6 @@ func (u *UserAuthRepo) ListByUserId(tenantId uint64, userId uint64) ([]*po.Relat
 		TenantId: tenantId,
 	}
 	auths := make([]*po.RelationUserAuth, 0)
-	err := u.postgres.FindList(r, &auths, []string{"user_id=?", "deleted=?"}, []interface{}{userId, 0})
+	err := u.Postgres.FindList(r, &auths, []string{"user_id=?", "deleted=?"}, []interface{}{userId, 0})
 	return auths, err
 }

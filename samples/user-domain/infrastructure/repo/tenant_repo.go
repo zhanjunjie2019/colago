@@ -16,15 +16,7 @@ func init() {
 }
 
 type TenantRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (t *TenantRepo) Postgres() *postgres.Postgres {
-	return t.postgres
-}
-
-func (t *TenantRepo) SetPostgres(postgres *postgres.Postgres) {
-	t.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (t *TenantRepo) New() ioc.AbsBean {
@@ -32,7 +24,7 @@ func (t *TenantRepo) New() ioc.AbsBean {
 }
 
 func (t *TenantRepo) TenantInitAction(tenantId uint64) error {
-	return t.postgres.AutoMigrate(
+	return t.Postgres.AutoMigrate(
 		&po.Account{
 			TenantId: tenantId,
 		},

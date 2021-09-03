@@ -18,15 +18,7 @@ func init() {
 }
 
 type AuthGatewayImpl struct {
-	reRepo *repo.UserAuthRepo `ij:"repo.UserAuthRepo"`
-}
-
-func (a *AuthGatewayImpl) ReRepo() *repo.UserAuthRepo {
-	return a.reRepo
-}
-
-func (a *AuthGatewayImpl) SetReRepo(reRepo *repo.UserAuthRepo) {
-	a.reRepo = reRepo
+	ReRepo *repo.UserAuthRepo `ij:"repo.UserAuthRepo"`
 }
 
 func (a *AuthGatewayImpl) New() ioc.AbsBean {
@@ -34,7 +26,7 @@ func (a *AuthGatewayImpl) New() ioc.AbsBean {
 }
 
 func (a *AuthGatewayImpl) FindByUserId(dto *client.DTO, userId uint64) ([]*auth.Auth, error) {
-	pos, err := a.reRepo.ListByUserId(dto.TenantId, userId)
+	pos, err := a.ReRepo.ListByUserId(dto.TenantId, userId)
 	if err != nil {
 		return nil, err
 	}

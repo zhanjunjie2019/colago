@@ -21,42 +21,10 @@ func init() {
 }
 
 type UserGatewayImpl struct {
-	reRepo   *repo.AccountUserRepo  `ij:"repo.AccountUserRepo"`
-	userRepo *repo.UserRepo         `ij:"repo.UserRepo"`
-	accRepo  *repo.AccountRepo      `ij:"repo.AccountRepo"`
-	authcli  *authclient.AuthClient `ij:"authclient.AuthClient"`
-}
-
-func (u *UserGatewayImpl) Authcli() *authclient.AuthClient {
-	return u.authcli
-}
-
-func (u *UserGatewayImpl) SetAuthcli(authcli *authclient.AuthClient) {
-	u.authcli = authcli
-}
-
-func (u *UserGatewayImpl) ReRepo() *repo.AccountUserRepo {
-	return u.reRepo
-}
-
-func (u *UserGatewayImpl) SetReRepo(reRepo *repo.AccountUserRepo) {
-	u.reRepo = reRepo
-}
-
-func (u *UserGatewayImpl) UserRepo() *repo.UserRepo {
-	return u.userRepo
-}
-
-func (u *UserGatewayImpl) SetUserRepo(userRepo *repo.UserRepo) {
-	u.userRepo = userRepo
-}
-
-func (u *UserGatewayImpl) AccRepo() *repo.AccountRepo {
-	return u.accRepo
-}
-
-func (u *UserGatewayImpl) SetAccRepo(accRepo *repo.AccountRepo) {
-	u.accRepo = accRepo
+	ReRepo   *repo.AccountUserRepo  `ij:"repo.AccountUserRepo"`
+	UserRepo *repo.UserRepo         `ij:"repo.UserRepo"`
+	AccRepo  *repo.AccountRepo      `ij:"repo.AccountRepo"`
+	Authcli  *authclient.AuthClient `ij:"authclient.AuthClient"`
 }
 
 func (u *UserGatewayImpl) New() ioc.AbsBean {
@@ -64,11 +32,11 @@ func (u *UserGatewayImpl) New() ioc.AbsBean {
 }
 
 func (u *UserGatewayImpl) FindByAccount(dto *client.DTO, acc *account.Account) (*user.User, error) {
-	rela, err := u.reRepo.FindByAccountId(dto.TenantId, acc.Id())
+	rela, err := u.ReRepo.FindByAccountId(dto.TenantId, acc.Id())
 	if err != nil {
 		return nil, err
 	}
-	usr, err := u.userRepo.FindById(dto.TenantId, rela.UserId)
+	usr, err := u.UserRepo.FindById(dto.TenantId, rela.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +53,7 @@ func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
 	if err != nil {
 		return err
 	}
-	userPo, err = u.userRepo.InsertOne(userPo)
+	userPo, err = u.UserRepo.InsertOne(userPo)
 	if err != nil {
 		return err
 	}
@@ -95,7 +63,7 @@ func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
 		if err != nil {
 			return err
 		}
-		accountPo, err = u.accRepo.InsertOne(accountPo)
+		accountPo, err = u.AccRepo.InsertOne(accountPo)
 		if err != nil {
 			return err
 		}
@@ -105,11 +73,11 @@ func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
 			TenantId:  dto.TenantId,
 		})
 	}
-	_, err = u.reRepo.InsertBatch(relations)
+	_, err = u.ReRepo.InsertBatch(relations)
 	if err != nil {
 		return err
 	}
-	return u.authcli.CreateRoleAuthCodes(&client.CreateAuthCmd{
+	return u.Authcli.CreateRoleAuthCodes(&client.CreateAuthCmd{
 		Dto:    dto,
 		UserId: userPo.ID,
 		Roles:  user.Roles(),

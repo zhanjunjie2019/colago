@@ -16,15 +16,7 @@ func init() {
 }
 
 type AccountRepo struct {
-	postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (a *AccountRepo) Postgres() *postgres.Postgres {
-	return a.postgres
-}
-
-func (a *AccountRepo) SetPostgres(postgres *postgres.Postgres) {
-	a.postgres = postgres
+	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
 }
 
 func (a *AccountRepo) New() ioc.AbsBean {
@@ -32,13 +24,13 @@ func (a *AccountRepo) New() ioc.AbsBean {
 }
 
 func (a *AccountRepo) InsertOne(accPo *po.Account) (*po.Account, error) {
-	return accPo, a.postgres.InsertOne(accPo)
+	return accPo, a.Postgres.InsertOne(accPo)
 }
 
 func (a *AccountRepo) FindByAccKey(tenantId uint64, acckey string) (*po.Account, error) {
 	account := &po.Account{
 		TenantId: tenantId,
 	}
-	err := a.postgres.FindOne(account, []string{"acc_key=?", "deleted=?"}, []interface{}{acckey, 0})
+	err := a.Postgres.FindOne(account, []string{"acc_key=?", "deleted=?"}, []interface{}{acckey, 0})
 	return account, err
 }

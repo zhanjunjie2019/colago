@@ -22,7 +22,7 @@ func main() {
 		0,
 	)
 
-	tenantid := uint64(2)
+	tenantid := uint64(3)
 
 	// 用户服务创建新的租户
 	testcase.InitUserTenant(tenantid)

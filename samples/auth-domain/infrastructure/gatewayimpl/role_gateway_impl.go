@@ -18,15 +18,7 @@ func init() {
 }
 
 type RoleGatewayImpl struct {
-	reRepo *repo.UserRoleRepo `ij:"repo.UserRoleRepo"`
-}
-
-func (r *RoleGatewayImpl) ReRepo() *repo.UserRoleRepo {
-	return r.reRepo
-}
-
-func (r *RoleGatewayImpl) SetReRepo(reRepo *repo.UserRoleRepo) {
-	r.reRepo = reRepo
+	ReRepo *repo.UserRoleRepo `ij:"repo.UserRoleRepo"`
 }
 
 func (r *RoleGatewayImpl) New() ioc.AbsBean {
@@ -34,7 +26,7 @@ func (r *RoleGatewayImpl) New() ioc.AbsBean {
 }
 
 func (r *RoleGatewayImpl) FindByUserId(dto *client.DTO, userId uint64) ([]*role.Role, error) {
-	pos, err := r.reRepo.ListByUserId(dto.TenantId, userId)
+	pos, err := r.ReRepo.ListByUserId(dto.TenantId, userId)
 	if err != nil {
 		return nil, err
 	}

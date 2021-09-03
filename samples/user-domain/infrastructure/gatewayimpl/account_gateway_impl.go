@@ -18,15 +18,7 @@ func init() {
 }
 
 type AccountGatewayImpl struct {
-	accRepo *repo.AccountRepo `ij:"repo.AccountRepo"`
-}
-
-func (a *AccountGatewayImpl) AccRepo() *repo.AccountRepo {
-	return a.accRepo
-}
-
-func (a *AccountGatewayImpl) SetAccRepo(accRepo *repo.AccountRepo) {
-	a.accRepo = accRepo
+	AccRepo *repo.AccountRepo `ij:"repo.AccountRepo"`
 }
 
 func (a *AccountGatewayImpl) New() ioc.AbsBean {
@@ -34,7 +26,7 @@ func (a *AccountGatewayImpl) New() ioc.AbsBean {
 }
 
 func (a *AccountGatewayImpl) FindAccountByAccKey(dto *client.DTO, accKey string) (*account.Account, error) {
-	acc, err := a.accRepo.FindByAccKey(dto.TenantId, accKey)
+	acc, err := a.AccRepo.FindByAccKey(dto.TenantId, accKey)
 	if err != nil {
 		return nil, err
 	}

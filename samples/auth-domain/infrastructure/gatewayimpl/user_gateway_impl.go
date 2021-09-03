@@ -19,24 +19,8 @@ func init() {
 }
 
 type UserGatewayImpl struct {
-	roleRepo *repo.UserRoleRepo `ij:"repo.UserRoleRepo"`
-	authRepo *repo.UserAuthRepo `ij:"repo.UserAuthRepo"`
-}
-
-func (u *UserGatewayImpl) RoleRepo() *repo.UserRoleRepo {
-	return u.roleRepo
-}
-
-func (u *UserGatewayImpl) SetRoleRepo(roleRepo *repo.UserRoleRepo) {
-	u.roleRepo = roleRepo
-}
-
-func (u *UserGatewayImpl) AuthRepo() *repo.UserAuthRepo {
-	return u.authRepo
-}
-
-func (u *UserGatewayImpl) SetAuthRepo(authRepo *repo.UserAuthRepo) {
-	u.authRepo = authRepo
+	RoleRepo *repo.UserRoleRepo `ij:"repo.UserRoleRepo"`
+	AuthRepo *repo.UserAuthRepo `ij:"repo.UserAuthRepo"`
 }
 
 func (u *UserGatewayImpl) New() ioc.AbsBean {
@@ -48,7 +32,7 @@ func (u *UserGatewayImpl) SaveRoleAuth(dto *client.DTO, user *user.User) error {
 	if err != nil {
 		return err
 	}
-	_, err = u.roleRepo.InsertBatch(rolePos)
+	_, err = u.RoleRepo.InsertBatch(rolePos)
 	if err != nil {
 		return err
 	}
@@ -56,7 +40,7 @@ func (u *UserGatewayImpl) SaveRoleAuth(dto *client.DTO, user *user.User) error {
 	if err != nil {
 		return err
 	}
-	_, err = u.authRepo.InsertBatch(authPos)
+	_, err = u.AuthRepo.InsertBatch(authPos)
 	if err != nil {
 		return err
 	}
