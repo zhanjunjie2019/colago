@@ -70,7 +70,8 @@ func injectSimpleBeanAction(beanName string, obj AbsBean) error {
 			if err != nil {
 				return err
 			}
-			vp.FieldByName(field.Name).Set(reflect.ValueOf(bean))
+			vp.Field(i).Set(reflect.ValueOf(bean))
+			//vp.FieldByName(field.Name).Set(reflect.ValueOf(bean))
 		}
 	}
 	obj2 := runNewFunc(obj)
@@ -92,7 +93,8 @@ func getPrototypeBean(beanName string) (AbsBean, error) {
 			if err != nil {
 				return nil, err
 			}
-			vp.Elem().FieldByName(field.Name).Set(reflect.ValueOf(bean))
+			vp.Elem().Field(i).Set(reflect.ValueOf(bean))
+			//vp.Elem().FieldByName(field.Name).Set(reflect.ValueOf(bean))
 		}
 	}
 	return runNewFunc(vp.Interface().(AbsBean)), nil
@@ -107,8 +109,5 @@ func getSimpleBean(beanName string) (AbsBean, error) {
 }
 
 func runNewFunc(obj AbsBean) AbsBean {
-	vp := reflect.ValueOf(obj)
-	method := vp.MethodByName("New")
-	call := method.Call([]reflect.Value{})
-	return call[0].Interface().(AbsBean)
+	return obj.New()
 }
