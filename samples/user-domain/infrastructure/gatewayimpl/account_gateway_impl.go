@@ -7,6 +7,7 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/convertor"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo"
 	"fmt"
+	"golang.org/x/net/context"
 )
 
 func init() {
@@ -25,10 +26,10 @@ func (a *AccountGatewayImpl) New() ioc.AbsBean {
 	return a
 }
 
-func (a *AccountGatewayImpl) FindAccountByAccKey(dto *client.DTO, accKey string) (*account.Account, error) {
+func (a *AccountGatewayImpl) FindAccountByAccKey(ctx context.Context, dto *client.DTO, accKey string) (*account.Account, error) {
 	acc, err := a.AccRepo.FindByAccKey(dto.TenantId, accKey)
 	if err != nil {
 		return nil, err
 	}
-	return convertor.PoToAccountEntity(acc)
+	return convertor.PoToAccountEntity(ctx, acc)
 }

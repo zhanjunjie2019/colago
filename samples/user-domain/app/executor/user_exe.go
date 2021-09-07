@@ -3,6 +3,7 @@ package executor
 import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/jwt"
+	"e.coding.net/double-j/ego/colago/common/skywalking"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/user"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/convertor"
@@ -54,8 +55,14 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+		return cmd.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	response := new(client.UserResponse)
-	err := u.TenantRepo.TenantInitAction(cmd.TenantId)
+	err = u.TenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -76,8 +83,14 @@ func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, context cluster
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+		return cmd.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	response := new(client.UserResponse)
-	entity, err := convertor.UserCreateDtoToUserEntity(cmd)
+	entity, err := convertor.UserCreateDtoToUserEntity(span.Ctx(), cmd)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -109,11 +122,17 @@ func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, context cluster.Grain
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+		return cmd.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	dto := cmd.Dto
 	key := cmd.AccKey
 	password := cmd.Password
 	response := new(client.UserLoginResponse)
-	token, err := u.UserService.LoginAction(dto, key, password)
+	token, err := u.UserService.LoginAction(span.Ctx(), dto, key, password)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,

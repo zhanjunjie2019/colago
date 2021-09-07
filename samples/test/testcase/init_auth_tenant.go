@@ -5,10 +5,11 @@ import (
 	authclient "e.coding.net/double-j/ego/colago/samples/auth-client"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
+	"golang.org/x/net/context"
 	"time"
 )
 
-func InitAuthTenant(tenantid uint64) {
+func InitAuthTenant(ctx context.Context, tenantid uint64) {
 	bean, err := ioc.GetBean("authclient.AuthClient")
 	if err != nil {
 		fmt.Println("权限服务创建新的租户:" + err.Error())
@@ -16,7 +17,7 @@ func InitAuthTenant(tenantid uint64) {
 	}
 	authcli := bean.(*authclient.AuthClient)
 	sns := time.Now()
-	err = authcli.InitAuthTenant(&client.AuthTenantInitCmd{
+	err = authcli.InitAuthTenant(ctx, &client.AuthTenantInitCmd{
 		Dto: &client.DTO{
 			TenantId: tenantid,
 		},

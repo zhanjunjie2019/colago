@@ -4,6 +4,7 @@ import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
 	"e.coding.net/double-j/ego/colago/common/sentinel"
+	"e.coding.net/double-j/ego/colago/common/skywalking"
 	"e.coding.net/double-j/ego/colago/samples/test/testcase"
 	"fmt"
 )
@@ -23,16 +24,34 @@ func main() {
 		0,
 	)
 
-	protoactor.InitClientFilters(sentinel.SentinuelActorChainFactory)
+	err := skywalking.NewGlobalTracer("test-main", "127.0.0.1:11800")
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
 
-	tenantid := uint64(4)
+	protoactor.InitClientFilters(
+		sentinel.SentinulFilterFactory,
+		skywalking.SkyFilterFactory,
+	)
+
+	span, err := skywalking.NewRootLocalSpan()
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
+	defer func() {
+		span.End(err)
+	}()
+
+	tenantid := uint64(0)
 
 	// 用户服务创建新的租户
-	testcase.InitUserTenant(tenantid)
+	testcase.InitUserTenant(span.Ctx(), tenantid)
 	// 权限服务创建新的租户
-	testcase.InitAuthTenant(tenantid)
+	testcase.InitAuthTenant(span.Ctx(), tenantid)
 	// 创建新的用户
-	testcase.CreateUserAction(tenantid)
+	testcase.CreateUserAction(span.Ctx(), tenantid)
 	// 用户登录行为
-	testcase.LoginAction(tenantid)
+	testcase.LoginAction(span.Ctx(), tenantid)
 }

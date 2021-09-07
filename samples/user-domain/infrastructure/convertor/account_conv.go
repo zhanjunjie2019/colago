@@ -5,14 +5,16 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
+	"golang.org/x/net/context"
 )
 
-func UserCreateDtoToAccountEntity(cmd *client.CreateUserCmd) (*account.Account, error) {
+func UserCreateDtoToAccountEntity(ctx context.Context, cmd *client.CreateUserCmd) (*account.Account, error) {
 	accountBean, err := domain.GetDomainFactory().Create("account.Account")
 	if err != nil {
 		return nil, err
 	}
 	accountEntity := accountBean.(*account.Account)
+	accountEntity.SetCtx(ctx)
 	accountEntity.SetAccType(account.AccountType(cmd.AccType))
 	accountEntity.SetAccKey(cmd.AccKey)
 	accountEntity.SetPassword(cmd.Password)
@@ -20,13 +22,14 @@ func UserCreateDtoToAccountEntity(cmd *client.CreateUserCmd) (*account.Account, 
 	return accountEntity, nil
 }
 
-func PoToAccountEntity(a *po.Account) (*account.Account, error) {
+func PoToAccountEntity(ctx context.Context, a *po.Account) (*account.Account, error) {
 	accountBean, err := domain.GetDomainFactory().Create("account.Account")
 	if err != nil {
 		return nil, err
 	}
 	accountEntity := accountBean.(*account.Account)
 	accountEntity.SetId(a.ID)
+	accountEntity.SetCtx(ctx)
 	accountEntity.SetAccType(a.AccType)
 	accountEntity.SetAccKey(a.AccKey)
 	accountEntity.SetPassword(a.Password)

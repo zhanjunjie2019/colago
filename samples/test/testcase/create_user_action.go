@@ -5,10 +5,11 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	userclient "e.coding.net/double-j/ego/colago/samples/user-client"
 	"fmt"
+	"golang.org/x/net/context"
 	"time"
 )
 
-func CreateUserAction(tenantid uint64) {
+func CreateUserAction(ctx context.Context, tenantid uint64) {
 	bean, err := ioc.GetBean("userclient.UserClient")
 	if err != nil {
 		fmt.Println("创建新的用户:" + err.Error())
@@ -16,7 +17,7 @@ func CreateUserAction(tenantid uint64) {
 	}
 	usercli := bean.(*userclient.UserClient)
 	sns := time.Now()
-	err = usercli.CreateUserAction(&client.CreateUserCmd{
+	err = usercli.CreateUserAction(ctx, &client.CreateUserCmd{
 		Dto: &client.DTO{
 			TenantId: tenantid,
 		},

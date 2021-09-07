@@ -9,4 +9,5 @@ require (
 	github.com/hashicorp/consul/api v1.9.1
 	gorm.io/driver/postgres v1.1.0
 	gorm.io/gorm v1.21.13
+	github.com/SkyAPM/go2sky v1.1.0
 )

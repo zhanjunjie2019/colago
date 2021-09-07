@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/cluster"
 	"github.com/alibaba/sentinel-golang/core/circuitbreaker"
+	"golang.org/x/net/context"
 	"strconv"
 	"time"
 )
@@ -55,10 +56,12 @@ func (u *UserClient) New() ioc.AbsBean {
 	return u
 }
 
-func (u *UserClient) InitUserTenant(dto *client.UserTenantInitCmd) error {
+func (u *UserClient) InitUserTenant(ctx context.Context, dto *client.UserTenantInitCmd) error {
 	_, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "User.InitAuthTenant",
+			Ctx:           ctx,
+			OperationName: "User",
+			Peer:          "InitUserTenant",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, strconv.FormatUint(dto.TenantId, 10))
@@ -84,10 +87,12 @@ func (u *UserClient) InitUserTenant(dto *client.UserTenantInitCmd) error {
 	return err
 }
 
-func (u *UserClient) CreateUserAction(dto *client.CreateUserCmd) error {
+func (u *UserClient) CreateUserAction(ctx context.Context, dto *client.CreateUserCmd) error {
 	_, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "User.CreateUserAction",
+			Ctx:           ctx,
+			OperationName: "User",
+			Peer:          "CreateUserAction",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, dto.AccKey)
@@ -113,10 +118,12 @@ func (u *UserClient) CreateUserAction(dto *client.CreateUserCmd) error {
 	return err
 }
 
-func (u *UserClient) LoginAction(dto *client.UserLoginCmd) (*client.UserLoginData, error) {
+func (u *UserClient) LoginAction(ctx context.Context, dto *client.UserLoginCmd) (*client.UserLoginData, error) {
 	rs, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "User.LoginAction",
+			Ctx:           ctx,
+			OperationName: "User",
+			Peer:          "LoginAction",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, dto.AccKey)

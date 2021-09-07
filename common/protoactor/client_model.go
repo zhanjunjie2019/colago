@@ -1,7 +1,13 @@
 package protoactor
 
+import (
+	"golang.org/x/net/context"
+)
+
 type ClientActionArgs struct {
-	Resource string
-	TryFn    func() (interface{}, error)
-	CatchFn  func(interface{}) (interface{}, error)
+	Ctx           context.Context
+	OperationName string
+	Peer          string
+	TryFn         func() (interface{}, error)
+	CatchFn       func(interface{}) (interface{}, error)
 }

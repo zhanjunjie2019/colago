@@ -7,6 +7,7 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
+	"golang.org/x/net/context"
 )
 
 func init() {
@@ -25,7 +26,7 @@ func (r *RoleGatewayImpl) New() ioc.AbsBean {
 	return r
 }
 
-func (r *RoleGatewayImpl) FindByUserId(dto *client.DTO, userId uint64) ([]*role.Role, error) {
+func (r *RoleGatewayImpl) FindByUserId(ctx context.Context, dto *client.DTO, userId uint64) ([]*role.Role, error) {
 	pos, err := r.ReRepo.ListByUserId(dto.TenantId, userId)
 	if err != nil {
 		return nil, err

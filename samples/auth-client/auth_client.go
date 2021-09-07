@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/cluster"
 	"github.com/alibaba/sentinel-golang/core/circuitbreaker"
+	"golang.org/x/net/context"
 	"strconv"
 	"time"
 )
@@ -63,10 +64,12 @@ func (a *AuthClient) New() ioc.AbsBean {
 	return a
 }
 
-func (a *AuthClient) InitAuthTenant(dto *client.AuthTenantInitCmd) error {
+func (a *AuthClient) InitAuthTenant(ctx context.Context, dto *client.AuthTenantInitCmd) error {
 	_, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "Auth.InitAuthTenant",
+			Ctx:           ctx,
+			OperationName: "Auth",
+			Peer:          "InitAuthTenant",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.TenantId, 10))
@@ -92,10 +95,12 @@ func (a *AuthClient) InitAuthTenant(dto *client.AuthTenantInitCmd) error {
 	return err
 }
 
-func (a *AuthClient) CreateRoleAuthCodes(dto *client.CreateAuthCmd) error {
+func (a *AuthClient) CreateRoleAuthCodes(ctx context.Context, dto *client.CreateAuthCmd) error {
 	_, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "Auth.CreateRoleAuthCodes",
+			Ctx:           ctx,
+			OperationName: "Auth",
+			Peer:          "CreateRoleAuthCodes",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))
@@ -121,10 +126,12 @@ func (a *AuthClient) CreateRoleAuthCodes(dto *client.CreateAuthCmd) error {
 	return err
 }
 
-func (a *AuthClient) FindRolesByUserId(dto *client.RoleQry) ([]string, error) {
+func (a *AuthClient) FindRolesByUserId(ctx context.Context, dto *client.RoleQry) ([]string, error) {
 	rs, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "Auth.FindRolesByUserId",
+			Ctx:           ctx,
+			OperationName: "Auth",
+			Peer:          "FindRolesByUserId",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))
@@ -153,10 +160,12 @@ func (a *AuthClient) FindRolesByUserId(dto *client.RoleQry) ([]string, error) {
 	return nil, err
 }
 
-func (a *AuthClient) FindAuthsByUserId(dto *client.AuthQry) ([]string, error) {
+func (a *AuthClient) FindAuthsByUserId(ctx context.Context, dto *client.AuthQry) ([]string, error) {
 	rs, err := protoactor.ClientChain(
 		protoactor.ClientActionArgs{
-			Resource: "Auth.FindAuthsByUserId",
+			Ctx:           ctx,
+			OperationName: "Auth",
+			Peer:          "FindAuthsByUserId",
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))

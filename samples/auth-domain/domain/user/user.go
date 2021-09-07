@@ -33,7 +33,7 @@ func (u *User) New() ioc.AbsBean {
 
 func (u *User) Auths() []*auth.Auth {
 	if u.auths == nil {
-		auths, err := u.AuthGateway.FindByUserId(u.dto, u.Id())
+		auths, err := u.AuthGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -49,7 +49,7 @@ func (u *User) SetAuths(auths []*auth.Auth) {
 
 func (u *User) Roles() []*role.Role {
 	if u.roles == nil {
-		roles, err := u.RoleGateway.FindByUserId(u.dto, u.Id())
+		roles, err := u.RoleGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -72,5 +72,5 @@ func (u *User) SetDto(dto *client.DTO) {
 }
 
 func (u *User) SaveRoleAuth() error {
-	return u.UserGateway.SaveRoleAuth(u.dto, u)
+	return u.UserGateway.SaveRoleAuth(u.Ctx(), u.dto, u)
 }

@@ -8,6 +8,7 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
+	"golang.org/x/net/context"
 )
 
 func init() {
@@ -27,7 +28,7 @@ func (u *UserGatewayImpl) New() ioc.AbsBean {
 	return u
 }
 
-func (u *UserGatewayImpl) SaveRoleAuth(dto *client.DTO, user *user.User) error {
+func (u *UserGatewayImpl) SaveRoleAuth(ctx context.Context, dto *client.DTO, user *user.User) error {
 	rolePos, err := convertor.EntitysToBatchRolePos(dto, user.Id(), user.Roles())
 	if err != nil {
 		return err
@@ -47,7 +48,7 @@ func (u *UserGatewayImpl) SaveRoleAuth(dto *client.DTO, user *user.User) error {
 	return nil
 }
 
-func (u *UserGatewayImpl) FindById(dto *client.DTO, userId uint64) (*user.User, error) {
+func (u *UserGatewayImpl) FindById(ctx context.Context, dto *client.DTO, userId uint64) (*user.User, error) {
 	userBean, err := domain.GetDomainFactory().Create("user.User")
 	if err != nil {
 		return nil, err

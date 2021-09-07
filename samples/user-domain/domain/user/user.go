@@ -106,7 +106,7 @@ func (u *User) SetStatus(status uint8) {
 
 func (u *User) Roles() []string {
 	if u.roles == nil {
-		roles, err := u.AuthGateway.FindRolesByUserId(u.dto, u.Id())
+		roles, err := u.AuthGateway.FindRolesByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -122,7 +122,7 @@ func (u *User) SetRoles(roles []string) {
 
 func (u *User) Auths() []string {
 	if u.auths == nil {
-		auths, err := u.AuthGateway.FindAuthsByUserId(u.dto, u.Id())
+		auths, err := u.AuthGateway.FindAuthsByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -148,5 +148,5 @@ func (u *User) Create() error {
 	for _, a := range u.accounts {
 		a.SetPassword(codec.ToSHA1(a.Password()))
 	}
-	return u.UserGateway.CreateUser(u.dto, u)
+	return u.UserGateway.CreateUser(u.Ctx(), u.dto, u)
 }

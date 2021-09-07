@@ -6,19 +6,21 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/user"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
+	"golang.org/x/net/context"
 	"time"
 )
 
-func UserCreateDtoToUserEntity(cmd *client.CreateUserCmd) (*user.User, error) {
+func UserCreateDtoToUserEntity(ctx context.Context, cmd *client.CreateUserCmd) (*user.User, error) {
 	userBean, err := domain.GetDomainFactory().Create("user.User")
 	if err != nil {
 		return nil, err
 	}
-	accountEntity, err := UserCreateDtoToAccountEntity(cmd)
+	accountEntity, err := UserCreateDtoToAccountEntity(ctx, cmd)
 	if err != nil {
 		return nil, err
 	}
 	userEntity := userBean.(*user.User)
+	userEntity.SetCtx(ctx)
 	userEntity.SetAccounts([]*account.Account{accountEntity})
 	userEntity.SetFirstName(cmd.FirstName)
 	userEntity.SetLastName(cmd.LastName)
@@ -33,13 +35,14 @@ func UserCreateDtoToUserEntity(cmd *client.CreateUserCmd) (*user.User, error) {
 	return userEntity, nil
 }
 
-func PoToUserEntity(u *po.UserInfo) (*user.User, error) {
+func PoToUserEntity(ctx context.Context, u *po.UserInfo) (*user.User, error) {
 	userBean, err := domain.GetDomainFactory().Create("user.User")
 	if err != nil {
 		return nil, err
 	}
 	userEntity := userBean.(*user.User)
 	userEntity.SetId(u.ID)
+	userEntity.SetCtx(ctx)
 	userEntity.SetFirstName(u.FirstName)
 	userEntity.SetLastName(u.LastName)
 	userEntity.SetAge(u.Age)

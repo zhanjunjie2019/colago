@@ -10,6 +10,7 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
 	"fmt"
+	"golang.org/x/net/context"
 )
 
 func init() {
@@ -31,7 +32,7 @@ func (u *UserGatewayImpl) New() ioc.AbsBean {
 	return u
 }
 
-func (u *UserGatewayImpl) FindByAccount(dto *client.DTO, acc *account.Account) (*user.User, error) {
+func (u *UserGatewayImpl) FindByAccount(ctx context.Context, dto *client.DTO, acc *account.Account) (*user.User, error) {
 	rela, err := u.ReRepo.FindByAccountId(dto.TenantId, acc.Id())
 	if err != nil {
 		return nil, err
@@ -40,7 +41,7 @@ func (u *UserGatewayImpl) FindByAccount(dto *client.DTO, acc *account.Account) (
 	if err != nil {
 		return nil, err
 	}
-	userEntity, err := convertor.PoToUserEntity(usr)
+	userEntity, err := convertor.PoToUserEntity(ctx, usr)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +49,7 @@ func (u *UserGatewayImpl) FindByAccount(dto *client.DTO, acc *account.Account) (
 	return userEntity, err
 }
 
-func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
+func (u *UserGatewayImpl) CreateUser(ctx context.Context, dto *client.DTO, user *user.User) error {
 	userPo, err := convertor.EntityToUserPo(dto, user)
 	if err != nil {
 		return err
@@ -77,7 +78,7 @@ func (u *UserGatewayImpl) CreateUser(dto *client.DTO, user *user.User) error {
 	if err != nil {
 		return err
 	}
-	return u.Authcli.CreateRoleAuthCodes(&client.CreateAuthCmd{
+	return u.Authcli.CreateRoleAuthCodes(ctx, &client.CreateAuthCmd{
 		Dto:    dto,
 		UserId: userPo.ID,
 		Roles:  user.Roles(),

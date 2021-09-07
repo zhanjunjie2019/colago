@@ -7,6 +7,7 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"fmt"
+	"golang.org/x/net/context"
 	"strings"
 	"time"
 )
@@ -28,8 +29,8 @@ func (u *UserService) New() ioc.AbsBean {
 	return u
 }
 
-func (u *UserService) LoginAction(dto *client.DTO, accKey string, pwd string) (*model.TokenData, error) {
-	acc, err := u.AccountGateway.FindAccountByAccKey(dto, accKey)
+func (u *UserService) LoginAction(ctx context.Context, dto *client.DTO, accKey string, pwd string) (*model.TokenData, error) {
+	acc, err := u.AccountGateway.FindAccountByAccKey(ctx, dto, accKey)
 	if err != nil {
 		return nil, err
 	}
@@ -37,7 +38,7 @@ func (u *UserService) LoginAction(dto *client.DTO, accKey string, pwd string) (*
 		return nil, fmt.Errorf("账号状态异常")
 	}
 	if strings.EqualFold(codec.ToSHA1(pwd), acc.Password()) {
-		user, err := u.UserGateway.FindByAccount(dto, acc)
+		user, err := u.UserGateway.FindByAccount(ctx, dto, acc)
 		if err != nil {
 			return nil, err
 		}

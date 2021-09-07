@@ -2,6 +2,7 @@ package executor
 
 import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
+	"e.coding.net/double-j/ego/colago/common/skywalking"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/user"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/convertor"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo"
@@ -53,8 +54,14 @@ func (a *AuthAppExe) TenantInitAction(cmd *client.AuthTenantInitCmd, context clu
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+		return cmd.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	response := new(client.AuthResponse)
-	err := a.TenantRepo.TenantInitAction(cmd.TenantId)
+	err = a.TenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -76,12 +83,18 @@ func (a *AuthAppExe) CreateAuthAction(cmd *client.CreateAuthCmd, context cluster
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+		return cmd.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	dto := cmd.Dto
 	userid := cmd.UserId
 	roles := cmd.Roles
 	auths := cmd.Auths
 	response := new(client.AuthResponse)
-	u, err := a.UserGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -133,10 +146,16 @@ func (a *AuthAppExe) FindRolesByUserId(qry *client.RoleQry, context cluster.Grai
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+		return qry.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.RoleQryResponse)
-	u, err := a.UserGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -164,10 +183,16 @@ func (a *AuthAppExe) FindAuthsByUserId(qry *client.AuthQry, context cluster.Grai
 			fmt.Println(err)
 		}
 	}()
+	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+		return qry.Dto.TraceId, nil
+	})
+	defer func() {
+		span.End(err)
+	}()
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.AuthQryResponse)
-	u, err := a.UserGateway.FindById(dto, userid)
+	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
