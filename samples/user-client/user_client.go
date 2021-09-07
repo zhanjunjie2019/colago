@@ -28,23 +28,7 @@ type UserClient struct {
 func (u *UserClient) New() ioc.AbsBean {
 	u.Sent.AppendCircuitbreakerRules(
 		&circuitbreaker.Rule{
-			Resource:         "User.InitAuthTenant",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-		&circuitbreaker.Rule{
-			Resource:         "User.CreateUserAction",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-		&circuitbreaker.Rule{
-			Resource:         "User.LoginAction",
+			Resource:         "User",
 			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
 			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
@@ -62,6 +46,10 @@ func (u *UserClient) InitUserTenant(ctx context.Context, dto *client.UserTenantI
 			Ctx:           ctx,
 			OperationName: "User",
 			Peer:          "InitUserTenant",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, strconv.FormatUint(dto.TenantId, 10))
@@ -93,6 +81,10 @@ func (u *UserClient) CreateUserAction(ctx context.Context, dto *client.CreateUse
 			Ctx:           ctx,
 			OperationName: "User",
 			Peer:          "CreateUserAction",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, dto.AccKey)
@@ -124,6 +116,10 @@ func (u *UserClient) LoginAction(ctx context.Context, dto *client.UserLoginCmd) 
 			Ctx:           ctx,
 			OperationName: "User",
 			Peer:          "LoginAction",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetUserGrainClient(protoactor.Cluster, dto.AccKey)

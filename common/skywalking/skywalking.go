@@ -48,7 +48,7 @@ func NewRootLocalSpan() (Span, error) {
 	return span, nil
 }
 
-func NewRootSpan(operationName string, extractor func(headerKey string) (string, error)) (Span, error) {
+func NewRootSpan(operationName string, extractor func(key string) (string, error)) (Span, error) {
 	rootSpan, ctx, err := tracer.CreateEntrySpan(context.Background(), operationName, extractor)
 	if err != nil {
 		return nil, err

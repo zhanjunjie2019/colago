@@ -41,9 +41,7 @@ func (s *SkyFilter) Filter(clientActionArgs protoactor.ClientActionArgs) (rs int
 	if err != nil {
 		return nil, err
 	}
-	span, err := parentSpan.CreateExitSpan(clientActionArgs.OperationName, clientActionArgs.Peer, func(headerKey, headerValue string) error {
-		return nil
-	})
+	span, err := parentSpan.CreateExitSpan(clientActionArgs.OperationName, clientActionArgs.Peer, clientActionArgs.SetTraceId)
 	defer func() {
 		span.End(err)
 	}()

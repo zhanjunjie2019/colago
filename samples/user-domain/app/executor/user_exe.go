@@ -55,7 +55,7 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
 		return cmd.Dto.TraceId, nil
 	})
 	defer func() {
@@ -83,7 +83,7 @@ func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, context cluster
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
 		return cmd.Dto.TraceId, nil
 	})
 	defer func() {
@@ -122,7 +122,7 @@ func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, context cluster.Grain
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
 		return cmd.Dto.TraceId, nil
 	})
 	defer func() {

@@ -39,7 +39,7 @@ func (s *SentinelFilter) SetNext(filter protoactor.ActorClientFilter) {
 
 func (s *SentinelFilter) Filter(clientActionArgs protoactor.ClientActionArgs) (rs interface{}, err error) {
 	return s.Sent.Entry(
-		clientActionArgs.OperationName+"."+clientActionArgs.Peer,
+		clientActionArgs.OperationName,
 		func() (interface{}, error) {
 			return s.next.Filter(clientActionArgs)
 		},

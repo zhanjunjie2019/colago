@@ -28,31 +28,7 @@ type AuthClient struct {
 func (a *AuthClient) New() ioc.AbsBean {
 	a.Sent.AppendCircuitbreakerRules(
 		&circuitbreaker.Rule{
-			Resource:         "Auth.InitAuthTenant",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-		&circuitbreaker.Rule{
-			Resource:         "Auth.CreateRoleAuthCodes",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-		&circuitbreaker.Rule{
-			Resource:         "Auth.FindRolesByUserId",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-		&circuitbreaker.Rule{
-			Resource:         "Auth.FindAuthsByUserId",
+			Resource:         "Auth",
 			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
 			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
 			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
@@ -70,6 +46,10 @@ func (a *AuthClient) InitAuthTenant(ctx context.Context, dto *client.AuthTenantI
 			Ctx:           ctx,
 			OperationName: "Auth",
 			Peer:          "InitAuthTenant",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.TenantId, 10))
@@ -101,6 +81,10 @@ func (a *AuthClient) CreateRoleAuthCodes(ctx context.Context, dto *client.Create
 			Ctx:           ctx,
 			OperationName: "Auth",
 			Peer:          "CreateRoleAuthCodes",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))
@@ -132,6 +116,10 @@ func (a *AuthClient) FindRolesByUserId(ctx context.Context, dto *client.RoleQry)
 			Ctx:           ctx,
 			OperationName: "Auth",
 			Peer:          "FindRolesByUserId",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))
@@ -166,6 +154,10 @@ func (a *AuthClient) FindAuthsByUserId(ctx context.Context, dto *client.AuthQry)
 			Ctx:           ctx,
 			OperationName: "Auth",
 			Peer:          "FindAuthsByUserId",
+			SetTraceId: func(key, value string) error {
+				dto.Dto.TraceId = value
+				return nil
+			},
 			TryFn: func() (interface{}, error) {
 				callOpts := cluster.DefaultGrainCallOptions(protoactor.Cluster).WithTimeout(time.Second).WithRetry(1)
 				grainClient := client.GetAuthGrainClient(protoactor.Cluster, strconv.FormatUint(dto.UserId, 10))

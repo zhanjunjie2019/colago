@@ -54,7 +54,7 @@ func (a *AuthAppExe) TenantInitAction(cmd *client.AuthTenantInitCmd, context clu
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("Auth", func(key string) (string, error) {
 		return cmd.Dto.TraceId, nil
 	})
 	defer func() {
@@ -83,7 +83,7 @@ func (a *AuthAppExe) CreateAuthAction(cmd *client.CreateAuthCmd, context cluster
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("Auth", func(key string) (string, error) {
 		return cmd.Dto.TraceId, nil
 	})
 	defer func() {
@@ -146,7 +146,7 @@ func (a *AuthAppExe) FindRolesByUserId(qry *client.RoleQry, context cluster.Grai
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("Auth", func(key string) (string, error) {
 		return qry.Dto.TraceId, nil
 	})
 	defer func() {
@@ -183,7 +183,7 @@ func (a *AuthAppExe) FindAuthsByUserId(qry *client.AuthQry, context cluster.Grai
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("Auth", func(headerKey string) (string, error) {
+	span, err := skywalking.NewRootSpan("Auth", func(key string) (string, error) {
 		return qry.Dto.TraceId, nil
 	})
 	defer func() {

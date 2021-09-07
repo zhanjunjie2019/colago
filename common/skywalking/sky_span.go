@@ -33,7 +33,7 @@ func (s *skyspan) CreateLocalSpan(operationName string) (Span, error) {
 	return span, nil
 }
 
-func (s *skyspan) CreateExitSpan(operationName string, remoteAddr string, injector func(headerKey, headerValue string) error) (Span, error) {
+func (s *skyspan) CreateExitSpan(operationName string, remoteAddr string, injector func(key, value string) error) (Span, error) {
 	nextSpan, err := tracer.CreateExitSpan(s.ctx, operationName, remoteAddr, injector)
 	if err != nil {
 		return nil, err
