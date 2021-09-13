@@ -13,31 +13,24 @@ import (
 	"github.com/AsynkronIT/protoactor-go/cluster"
 )
 
-func init() {
-	err := ioc.InjectSimpleBean(new(UserAppExe))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-}
-
 func NewUserAppExe() client.User {
-	bean, err := ioc.GetBean("executor.UserAppExe")
+	exe := new(UserAppExe)
+	err := ioc.GetContainer().Invoke(func(
+		userService *user.UserService,
+		tenantRepo *repo.TenantRepo) {
+		exe.userService = userService
+		exe.tenantRepo = tenantRepo
+	})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	exe := bean.(*UserAppExe)
 	return exe
 }
 
 type UserAppExe struct {
-	UserService *user.UserService `ij:"user.UserService"`
-	TenantRepo  *repo.TenantRepo  `ij:"repo.TenantRepo"`
-}
-
-func (u *UserAppExe) New() ioc.AbsBean {
-	return u
+	userService *user.UserService
+	tenantRepo  *repo.TenantRepo
 }
 
 func (u *UserAppExe) Init(string) {
@@ -62,7 +55,7 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 		span.End(err)
 	}()
 	response := new(client.UserResponse)
-	err = u.TenantRepo.TenantInitAction(cmd.TenantId)
+	err = u.tenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -132,7 +125,7 @@ func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, context cluster.Grain
 	key := cmd.AccKey
 	password := cmd.Password
 	response := new(client.UserLoginResponse)
-	token, err := u.UserService.LoginAction(span.Ctx(), dto, key, password)
+	token, err := u.userService.LoginAction(span.Ctx(), dto, key, password)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,

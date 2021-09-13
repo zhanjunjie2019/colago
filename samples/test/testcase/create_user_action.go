@@ -10,12 +10,15 @@ import (
 )
 
 func CreateUserAction(ctx context.Context, tenantid uint64) {
-	bean, err := ioc.GetBean("userclient.UserClient")
+	var usercli *userclient.UserClient
+	err := ioc.GetContainer().Invoke(func(u *userclient.UserClient) {
+		usercli = u
+	})
 	if err != nil {
-		fmt.Println("创建新的用户:" + err.Error())
+		fmt.Println(err.Error())
 		panic(err)
 	}
-	usercli := bean.(*userclient.UserClient)
+
 	sns := time.Now()
 	err = usercli.CreateUserAction(ctx, &client.CreateUserCmd{
 		Dto: &client.DTO{

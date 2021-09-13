@@ -3,11 +3,11 @@ package protoactor
 var rootClientFilter = new(RootActorClientFilter)
 var finalClientFilter = new(FinalActorClientFilter)
 
-func InitClientFilters(filterFactorys ...func() ActorClientFilter) {
-	if filterFactorys != nil {
+func InitClientFilters(filters ...ActorClientFilter) {
+	if filters != nil {
 		var lastFilter ActorClientFilter
-		for _, filterFactory := range filterFactorys {
-			nextFilter := filterFactory()
+		for _, filter := range filters {
+			nextFilter := filter
 			if lastFilter == nil {
 				rootClientFilter.SetNext(nextFilter)
 			} else {

@@ -3,33 +3,16 @@ package skywalking
 import (
 	"e.coding.net/double-j/ego/colago/common/ioc"
 	"e.coding.net/double-j/ego/colago/common/protoactor"
-	"fmt"
 )
 
 func init() {
-	err := ioc.InjectSimpleBean(new(SkyFilter))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-}
-
-func SkyFilterFactory() protoactor.ActorClientFilter {
-	bean, err := ioc.GetBean("skywalking.SkyFilter")
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-	chain := bean.(*SkyFilter)
-	return chain
+	ioc.AppendInjection(func() *SkyFilter {
+		return new(SkyFilter)
+	})
 }
 
 type SkyFilter struct {
 	next protoactor.ActorClientFilter
-}
-
-func (s *SkyFilter) New() ioc.AbsBean {
-	return s
 }
 
 func (s *SkyFilter) SetNext(filter protoactor.ActorClientFilter) {

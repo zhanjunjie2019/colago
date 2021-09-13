@@ -1,7 +1,6 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/domain"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/role"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo/po"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
@@ -10,11 +9,7 @@ import (
 func CodesToBatchRoleEntitys(codes []string) ([]*role.Role, error) {
 	roleEntitys := make([]*role.Role, 0)
 	for _, c := range codes {
-		roleBean, err := domain.GetDomainFactory().Create("role.Role")
-		if err != nil {
-			return nil, err
-		}
-		roleEntity := roleBean.(*role.Role)
+		roleEntity := new(role.Role)
 		roleEntity.SetCode(c)
 		roleEntitys = append(roleEntitys, roleEntity)
 	}
@@ -34,11 +29,7 @@ func PosToBatchRoleEntitys(roles []*po.RelationUserRole) ([]*role.Role, error) {
 }
 
 func PoToRoleEntity(r *po.RelationUserRole) (*role.Role, error) {
-	roleBean, err := domain.GetDomainFactory().Create("role.Role")
-	if err != nil {
-		return nil, err
-	}
-	roleEntity := roleBean.(*role.Role)
+	roleEntity := new(role.Role)
 	roleEntity.SetCode(r.RoleCode)
 	return roleEntity, nil
 }

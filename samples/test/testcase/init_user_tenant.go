@@ -10,12 +10,15 @@ import (
 )
 
 func InitUserTenant(ctx context.Context, tenantid uint64) {
-	bean, err := ioc.GetBean("userclient.UserClient")
+	var usercli *userclient.UserClient
+	err := ioc.GetContainer().Invoke(func(u *userclient.UserClient) {
+		usercli = u
+	})
 	if err != nil {
-		fmt.Println("用户服务创建新的租户:" + err.Error())
+		fmt.Println(err.Error())
 		panic(err)
 	}
-	usercli := bean.(*userclient.UserClient)
+
 	sns := time.Now()
 	err = usercli.InitUserTenant(ctx, &client.UserTenantInitCmd{
 		Dto: &client.DTO{

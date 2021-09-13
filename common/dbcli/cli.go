@@ -6,10 +6,21 @@ import (
 	"sync/atomic"
 )
 
+type Cli interface {
+	AutoMigrate(pos ...model.AbsPO) error
+	InsertOne(po model.AbsPO) error
+	FindOne(po model.AbsPO, query []string, args []interface{}) error
+	FindList(po model.AbsPO, dest interface{}, query []string, args []interface{}) error
+	GetWriter() *gorm.DB
+	SetWriter(*gorm.DB)
+	GetReader() *gorm.DB
+	SetReader([]*gorm.DB)
+}
+
 type DbCli struct {
 	ops     uint32
-	Writer  *gorm.DB
-	Readers []*gorm.DB
+	writer  *gorm.DB
+	readers []*gorm.DB
 }
 
 func (cli *DbCli) AutoMigrate(pos ...model.AbsPO) error {
@@ -50,17 +61,25 @@ func (cli *DbCli) FindList(po model.AbsPO, dest interface{}, query []string, arg
 	return db.Find(dest).Error
 }
 
+func (cli *DbCli) SetWriter(db *gorm.DB) {
+	cli.writer = db
+}
+
+func (cli *DbCli) SetReader(dbs []*gorm.DB) {
+	cli.readers = dbs
+}
+
 func (cli *DbCli) GetWriter() *gorm.DB {
-	return cli.Writer
+	return cli.writer
 }
 
 func (cli *DbCli) GetReader() *gorm.DB {
 	opsFinal := atomic.LoadUint32(&cli.ops)
-	u := opsFinal % uint32(len(cli.Readers))
+	u := opsFinal % uint32(len(cli.readers))
 	if opsFinal > 999 {
 		atomic.StoreUint32(&cli.ops, 0)
 	} else {
 		atomic.AddUint32(&cli.ops, 1)
 	}
-	return cli.Readers[u]
+	return cli.readers[u]
 }

@@ -9,11 +9,9 @@ import (
 )
 
 func init() {
-	err := ioc.InjectSimpleBean(new(Sentinel))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendInjection(func() *Sentinel {
+		return new(Sentinel)
+	})
 }
 
 type Sentinel struct {
@@ -22,12 +20,7 @@ type Sentinel struct {
 	hotspotRule         []*hotspot.Rule
 }
 
-func (s *Sentinel) New() ioc.AbsBean {
-	s.Init()
-	return s
-}
-
-func (s *Sentinel) Init() {
+func (s *Sentinel) init() {
 	if !s.ready {
 		err := sentinel.InitDefault()
 		if err != nil {
@@ -61,7 +54,7 @@ func (s *Sentinel) AppendHotspotRules(roles ...*hotspot.Rule) {
 }
 
 func (s *Sentinel) LoadRules() error {
-	s.Init()
+	s.init()
 	_, err := circuitbreaker.LoadRules(s.circuitbreakerRules)
 	if err != nil {
 		_, err = hotspot.LoadRules(s.hotspotRule)
@@ -69,7 +62,7 @@ func (s *Sentinel) LoadRules() error {
 	return err
 }
 
-func (s *Sentinel) Entry(
+func (Sentinel) Entry(
 	resource string,
 	tryFn func() (interface{}, error),
 	args ...interface{},

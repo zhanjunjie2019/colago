@@ -1,7 +1,6 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/domain"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/auth"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo/po"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
@@ -10,11 +9,7 @@ import (
 func CodesToBatchAuthEntitys(codes []string) ([]*auth.Auth, error) {
 	authEntitys := make([]*auth.Auth, 0)
 	for _, c := range codes {
-		authBean, err := domain.GetDomainFactory().Create("auth.Auth")
-		if err != nil {
-			return nil, err
-		}
-		authEntity := authBean.(*auth.Auth)
+		authEntity := new(auth.Auth)
 		authEntity.SetCode(c)
 		authEntitys = append(authEntitys, authEntity)
 	}
@@ -34,11 +29,7 @@ func PosToBatchAuthEntitys(auths []*po.RelationUserAuth) ([]*auth.Auth, error) {
 }
 
 func PoToAuthEntity(a *po.RelationUserAuth) (*auth.Auth, error) {
-	authBean, err := domain.GetDomainFactory().Create("auth.Auth")
-	if err != nil {
-		return nil, err
-	}
-	authEntity := authBean.(*auth.Auth)
+	authEntity := new(auth.Auth)
 	authEntity.SetCode(a.AuthCode)
 	return authEntity, nil
 }

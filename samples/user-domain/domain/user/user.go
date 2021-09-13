@@ -7,17 +7,22 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/auth"
-	"fmt"
 	"time"
 )
 
 func init() {
-	err := ioc.InjectPrototypeBean(new(User))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendPullFactory(func(
+		u UserGateway,
+		a auth.AuthGateway) {
+		userGateway = u
+		authGateway = a
+	})
 }
+
+var (
+	userGateway UserGateway
+	authGateway auth.AuthGateway
+)
 
 type User struct {
 	domain.Entity
@@ -31,13 +36,7 @@ type User struct {
 	status      uint8
 	roles       []string
 	auths       []string
-	UserGateway UserGateway      `ij:"gatewayimpl.UserGatewayImpl"`
-	AuthGateway auth.AuthGateway `ij:"gatewayimpl.AuthGatewayImpl"`
 	dto         *client.DTO
-}
-
-func (u *User) New() ioc.AbsBean {
-	return u
 }
 
 func (u *User) Accounts() []*account.Account {
@@ -106,7 +105,7 @@ func (u *User) SetStatus(status uint8) {
 
 func (u *User) Roles() []string {
 	if u.roles == nil {
-		roles, err := u.AuthGateway.FindRolesByUserId(u.Ctx(), u.dto, u.Id())
+		roles, err := authGateway.FindRolesByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -122,7 +121,7 @@ func (u *User) SetRoles(roles []string) {
 
 func (u *User) Auths() []string {
 	if u.auths == nil {
-		auths, err := u.AuthGateway.FindAuthsByUserId(u.Ctx(), u.dto, u.Id())
+		auths, err := authGateway.FindAuthsByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -148,5 +147,5 @@ func (u *User) Create() error {
 	for _, a := range u.accounts {
 		a.SetPassword(codec.ToSHA1(a.Password()))
 	}
-	return u.UserGateway.CreateUser(u.Ctx(), u.dto, u)
+	return userGateway.CreateUser(u.Ctx(), u.dto, u)
 }

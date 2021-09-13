@@ -2,17 +2,7 @@ package account
 
 import (
 	"e.coding.net/double-j/ego/colago/common/domain"
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"fmt"
 )
-
-func init() {
-	err := ioc.InjectPrototypeBean(new(Account))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-}
 
 type AccountType uint8
 
@@ -29,10 +19,6 @@ type Account struct {
 	accKey   string
 	password string
 	enable   bool
-}
-
-func (a *Account) New() ioc.AbsBean {
-	return a
 }
 
 func (a *Account) AccType() AccountType {

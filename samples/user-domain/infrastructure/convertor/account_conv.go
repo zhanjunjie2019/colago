@@ -1,7 +1,6 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/domain"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
@@ -9,11 +8,7 @@ import (
 )
 
 func UserCreateDtoToAccountEntity(ctx context.Context, cmd *client.CreateUserCmd) (*account.Account, error) {
-	accountBean, err := domain.GetDomainFactory().Create("account.Account")
-	if err != nil {
-		return nil, err
-	}
-	accountEntity := accountBean.(*account.Account)
+	accountEntity := new(account.Account)
 	accountEntity.SetCtx(ctx)
 	accountEntity.SetAccType(account.AccountType(cmd.AccType))
 	accountEntity.SetAccKey(cmd.AccKey)
@@ -23,11 +18,7 @@ func UserCreateDtoToAccountEntity(ctx context.Context, cmd *client.CreateUserCmd
 }
 
 func PoToAccountEntity(ctx context.Context, a *po.Account) (*account.Account, error) {
-	accountBean, err := domain.GetDomainFactory().Create("account.Account")
-	if err != nil {
-		return nil, err
-	}
-	accountEntity := accountBean.(*account.Account)
+	accountEntity := new(account.Account)
 	accountEntity.SetId(a.ID)
 	accountEntity.SetCtx(ctx)
 	accountEntity.SetAccType(a.AccType)

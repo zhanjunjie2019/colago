@@ -10,11 +10,7 @@ import (
 )
 
 func init() {
-	err := ioc.InjectSimpleBeanFinal()
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.BatchProvideFinal()
 }
 
 func main() {
@@ -30,10 +26,18 @@ func main() {
 		panic(err)
 	}
 
-	protoactor.InitClientFilters(
-		sentinel.SentinulFilterFactory,
-		skywalking.SkyFilterFactory,
-	)
+	err = ioc.GetContainer().Invoke(func(
+		sentFilter *sentinel.SentinelFilter,
+		skyFilter *skywalking.SkyFilter) {
+		protoactor.InitClientFilters(
+			sentFilter,
+			skyFilter,
+		)
+	})
+	if err != nil {
+		fmt.Println(err.Error())
+		panic(err)
+	}
 
 	span, err := skywalking.NewRootLocalSpan()
 	if err != nil {
@@ -44,7 +48,7 @@ func main() {
 		span.End(err)
 	}()
 
-	tenantid := uint64(0)
+	tenantid := uint64(7)
 
 	// 用户服务创建新的租户
 	testcase.InitUserTenant(span.Ctx(), tenantid)

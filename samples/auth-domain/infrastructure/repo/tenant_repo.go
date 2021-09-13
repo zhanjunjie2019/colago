@@ -1,30 +1,25 @@
 package repo
 
 import (
+	"e.coding.net/double-j/ego/colago/common/dbcli"
 	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/postgres"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo/po"
-	"fmt"
 )
 
 func init() {
-	err := ioc.InjectSimpleBean(new(TenantRepo))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendInjection(func(dbcli dbcli.Cli) *TenantRepo {
+		return &TenantRepo{
+			dbcli: dbcli,
+		}
+	})
 }
 
 type TenantRepo struct {
-	Postgres *postgres.Postgres `ij:"postgres.Postgres"`
-}
-
-func (t *TenantRepo) New() ioc.AbsBean {
-	return t
+	dbcli dbcli.Cli
 }
 
 func (t *TenantRepo) TenantInitAction(tenantId uint64) error {
-	return t.Postgres.AutoMigrate(
+	return t.dbcli.AutoMigrate(
 		&po.RelationUserAuth{
 			TenantId: tenantId,
 		},

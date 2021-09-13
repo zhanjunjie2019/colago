@@ -13,24 +13,23 @@ import (
 )
 
 func init() {
-	err := ioc.InjectSimpleBean(new(UserService))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendInjection(func(
+		accountGateway account.AccountGateway,
+		userGateway UserGateway) *UserService {
+		return &UserService{
+			accountGateway: accountGateway,
+			userGateway:    userGateway,
+		}
+	})
 }
 
 type UserService struct {
-	AccountGateway account.AccountGateway `ij:"gatewayimpl.AccountGatewayImpl"`
-	UserGateway    UserGateway            `ij:"gatewayimpl.UserGatewayImpl"`
-}
-
-func (u *UserService) New() ioc.AbsBean {
-	return u
+	accountGateway account.AccountGateway
+	userGateway    UserGateway
 }
 
 func (u *UserService) LoginAction(ctx context.Context, dto *client.DTO, accKey string, pwd string) (*model.TokenData, error) {
-	acc, err := u.AccountGateway.FindAccountByAccKey(ctx, dto, accKey)
+	acc, err := u.accountGateway.FindAccountByAccKey(ctx, dto, accKey)
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +37,7 @@ func (u *UserService) LoginAction(ctx context.Context, dto *client.DTO, accKey s
 		return nil, fmt.Errorf("账号状态异常")
 	}
 	if strings.EqualFold(codec.ToSHA1(pwd), acc.Password()) {
-		user, err := u.UserGateway.FindByAccount(ctx, dto, acc)
+		user, err := u.userGateway.FindByAccount(ctx, dto, acc)
 		if err != nil {
 			return nil, err
 		}

@@ -10,12 +10,15 @@ import (
 )
 
 func InitAuthTenant(ctx context.Context, tenantid uint64) {
-	bean, err := ioc.GetBean("authclient.AuthClient")
+	var authcli *authclient.AuthClient
+	err := ioc.GetContainer().Invoke(func(a *authclient.AuthClient) {
+		authcli = a
+	})
 	if err != nil {
-		fmt.Println("权限服务创建新的租户:" + err.Error())
+		fmt.Println(err.Error())
 		panic(err)
 	}
-	authcli := bean.(*authclient.AuthClient)
+
 	sns := time.Now()
 	err = authcli.InitAuthTenant(ctx, &client.AuthTenantInitCmd{
 		Dto: &client.DTO{

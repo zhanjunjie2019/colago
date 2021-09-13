@@ -6,34 +6,35 @@ import (
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/auth"
 	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/role"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	"fmt"
 )
 
 func init() {
-	err := ioc.InjectPrototypeBean(new(User))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendPullFactory(func(
+		u UserGateway,
+		r role.RoleGateway,
+		a auth.AuthGateway) {
+		userGateway = u
+		roleGateway = r
+		authGateway = a
+	})
 }
+
+var (
+	userGateway UserGateway
+	roleGateway role.RoleGateway
+	authGateway auth.AuthGateway
+)
 
 type User struct {
 	domain.Entity
-	auths       []*auth.Auth
-	roles       []*role.Role
-	UserGateway UserGateway      `ij:"gatewayimpl.UserGatewayImpl"`
-	RoleGateway role.RoleGateway `ij:"gatewayimpl.RoleGatewayImpl"`
-	AuthGateway auth.AuthGateway `ij:"gatewayimpl.AuthGatewayImpl"`
-	dto         *client.DTO
-}
-
-func (u *User) New() ioc.AbsBean {
-	return u
+	auths []*auth.Auth
+	roles []*role.Role
+	dto   *client.DTO
 }
 
 func (u *User) Auths() []*auth.Auth {
 	if u.auths == nil {
-		auths, err := u.AuthGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
+		auths, err := authGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -49,7 +50,7 @@ func (u *User) SetAuths(auths []*auth.Auth) {
 
 func (u *User) Roles() []*role.Role {
 	if u.roles == nil {
-		roles, err := u.RoleGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
+		roles, err := roleGateway.FindByUserId(u.Ctx(), u.dto, u.Id())
 		if err != nil {
 			// TODO 还不知道怎么办
 			return nil
@@ -72,5 +73,5 @@ func (u *User) SetDto(dto *client.DTO) {
 }
 
 func (u *User) SaveRoleAuth() error {
-	return u.UserGateway.SaveRoleAuth(u.Ctx(), u.dto, u)
+	return userGateway.SaveRoleAuth(u.Ctx(), u.dto, u)
 }

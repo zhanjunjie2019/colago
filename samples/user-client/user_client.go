@@ -14,30 +14,23 @@ import (
 )
 
 func init() {
-	err := ioc.InjectSimpleBean(new(UserClient))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
+	ioc.AppendInjection(func(sent *sentinel.Sentinel) *UserClient {
+		sent.AppendCircuitbreakerRules(
+			&circuitbreaker.Rule{
+				Resource:         "User",
+				Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
+				RetryTimeoutMs:   3000,                      // 熔断后3秒重试
+				MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
+				StatIntervalMs:   5000,                      // 单位时间为5秒
+				Threshold:        10,                        // 单位时间内容错数量
+			},
+		)
+		sent.LoadRules()
+		return new(UserClient)
+	})
 }
 
 type UserClient struct {
-	Sent *sentinel.Sentinel `ij:"sentinel.Sentinel"`
-}
-
-func (u *UserClient) New() ioc.AbsBean {
-	u.Sent.AppendCircuitbreakerRules(
-		&circuitbreaker.Rule{
-			Resource:         "User",
-			Strategy:         circuitbreaker.ErrorCount, // 异常记数方案
-			RetryTimeoutMs:   3000,                      // 熔断后3秒重试
-			MinRequestAmount: 10,                        // 单位时间内10个请求以上才进入异常记数计算
-			StatIntervalMs:   5000,                      // 单位时间为5秒
-			Threshold:        10,                        // 单位时间内容错数量
-		},
-	)
-	u.Sent.LoadRules()
-	return u
 }
 
 func (u *UserClient) InitUserTenant(ctx context.Context, dto *client.UserTenantInitCmd) error {

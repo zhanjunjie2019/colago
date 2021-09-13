@@ -1,7 +1,6 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/domain"
 	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
 	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/user"
@@ -11,15 +10,11 @@ import (
 )
 
 func UserCreateDtoToUserEntity(ctx context.Context, cmd *client.CreateUserCmd) (*user.User, error) {
-	userBean, err := domain.GetDomainFactory().Create("user.User")
-	if err != nil {
-		return nil, err
-	}
 	accountEntity, err := UserCreateDtoToAccountEntity(ctx, cmd)
 	if err != nil {
 		return nil, err
 	}
-	userEntity := userBean.(*user.User)
+	userEntity := new(user.User)
 	userEntity.SetCtx(ctx)
 	userEntity.SetAccounts([]*account.Account{accountEntity})
 	userEntity.SetFirstName(cmd.FirstName)
@@ -36,11 +31,7 @@ func UserCreateDtoToUserEntity(ctx context.Context, cmd *client.CreateUserCmd) (
 }
 
 func PoToUserEntity(ctx context.Context, u *po.UserInfo) (*user.User, error) {
-	userBean, err := domain.GetDomainFactory().Create("user.User")
-	if err != nil {
-		return nil, err
-	}
-	userEntity := userBean.(*user.User)
+	userEntity := new(user.User)
 	userEntity.SetId(u.ID)
 	userEntity.SetCtx(ctx)
 	userEntity.SetFirstName(u.FirstName)

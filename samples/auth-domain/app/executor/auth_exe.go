@@ -12,31 +12,24 @@ import (
 	"github.com/AsynkronIT/protoactor-go/cluster"
 )
 
-func init() {
-	err := ioc.InjectSimpleBean(new(AuthAppExe))
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-}
-
 func NewAuthAppExe() client.Auth {
-	bean, err := ioc.GetBean("executor.AuthAppExe")
+	exe := new(AuthAppExe)
+	err := ioc.GetContainer().Invoke(func(
+		userGateway user.UserGateway,
+		tenantRepo *repo.TenantRepo) {
+		exe.userGateway = userGateway
+		exe.tenantRepo = tenantRepo
+	})
 	if err != nil {
 		fmt.Println(err.Error())
 		panic(err)
 	}
-	exe := bean.(*AuthAppExe)
 	return exe
 }
 
 type AuthAppExe struct {
-	UserGateway user.UserGateway `ij:"gatewayimpl.UserGatewayImpl"`
-	TenantRepo  *repo.TenantRepo `ij:"repo.TenantRepo"`
-}
-
-func (a *AuthAppExe) New() ioc.AbsBean {
-	return a
+	userGateway user.UserGateway
+	tenantRepo  *repo.TenantRepo
 }
 
 func (a *AuthAppExe) Init(string) {
@@ -61,7 +54,7 @@ func (a *AuthAppExe) TenantInitAction(cmd *client.AuthTenantInitCmd, context clu
 		span.End(err)
 	}()
 	response := new(client.AuthResponse)
-	err = a.TenantRepo.TenantInitAction(cmd.TenantId)
+	err = a.tenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -94,7 +87,7 @@ func (a *AuthAppExe) CreateAuthAction(cmd *client.CreateAuthCmd, context cluster
 	roles := cmd.Roles
 	auths := cmd.Auths
 	response := new(client.AuthResponse)
-	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
+	u, err := a.userGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -155,7 +148,7 @@ func (a *AuthAppExe) FindRolesByUserId(qry *client.RoleQry, context cluster.Grai
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.RoleQryResponse)
-	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
+	u, err := a.userGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -192,7 +185,7 @@ func (a *AuthAppExe) FindAuthsByUserId(qry *client.AuthQry, context cluster.Grai
 	dto := qry.Dto
 	userid := qry.UserId
 	response := new(client.AuthQryResponse)
-	u, err := a.UserGateway.FindById(span.Ctx(), dto, userid)
+	u, err := a.userGateway.FindById(span.Ctx(), dto, userid)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
