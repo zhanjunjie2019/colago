@@ -47,4 +47,5 @@ colago/samples/test             测试用例执行入口
     微服务信箱框架 protoactor
     服务注册中心 consul
     数据库 postgresql
+    链路跟踪 skywalking
 本代码库主要展示代码分层架构与领域驱动设计模型，所有应用技术都是解耦可替换的。
