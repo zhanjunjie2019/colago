@@ -1,13 +1,13 @@
 package userclient
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/protoactor"
-	"e.coding.net/double-j/ego/colago/common/sentinel"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/cluster"
 	"github.com/alibaba/sentinel-golang/core/circuitbreaker"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/common/protoactor"
+	"github.com/zhanjunjie2019/colago/common/sentinel"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"golang.org/x/net/context"
 	"strconv"
 	"time"

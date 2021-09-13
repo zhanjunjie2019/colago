@@ -1,7 +1,7 @@
 package po
 
 import (
-	"e.coding.net/double-j/ego/colago/common/model"
+	"github.com/zhanjunjie2019/colago/common/model"
 	"strconv"
 	"time"
 )

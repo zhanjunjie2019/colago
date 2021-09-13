@@ -1,8 +1,8 @@
 package sentinel
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/protoactor"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/common/protoactor"
 )
 
 func init() {

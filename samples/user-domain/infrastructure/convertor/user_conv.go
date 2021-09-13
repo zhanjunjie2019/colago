@@ -1,10 +1,10 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/user"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/account"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/user"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/repo/po"
 	"golang.org/x/net/context"
 	"time"
 )

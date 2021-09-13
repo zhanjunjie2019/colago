@@ -1,15 +1,15 @@
 package executor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/skywalking"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/user"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/convertor"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/cluster"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/common/skywalking"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/domain/user"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/infrastructure/convertor"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/infrastructure/repo"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 )
 
 var authAppExe *AuthAppExe

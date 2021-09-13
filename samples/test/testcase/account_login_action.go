@@ -1,11 +1,11 @@
 package testcase
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	userclient "e.coding.net/double-j/ego/colago/samples/user-client"
 	"encoding/json"
 	"fmt"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
+	userclient "github.com/zhanjunjie2019/colago/samples/user-client"
 	"golang.org/x/net/context"
 	"time"
 )

@@ -1,9 +1,9 @@
 package repo
 
 import (
-	"e.coding.net/double-j/ego/colago/common/dbcli"
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo/po"
+	"github.com/zhanjunjie2019/colago/common/dbcli"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/repo/po"
 )
 
 func init() {

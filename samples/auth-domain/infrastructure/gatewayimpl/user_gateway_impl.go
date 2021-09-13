@@ -1,11 +1,11 @@
 package gatewayimpl
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/user"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/convertor"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/domain/user"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/infrastructure/convertor"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/infrastructure/repo"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"golang.org/x/net/context"
 )
 

@@ -1,9 +1,9 @@
 package convertor
 
 import (
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/domain/auth"
-	"e.coding.net/double-j/ego/colago/samples/auth-domain/infrastructure/repo/po"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/domain/auth"
+	"github.com/zhanjunjie2019/colago/samples/auth-domain/infrastructure/repo/po"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 )
 
 func CodesToBatchAuthEntitys(codes []string) ([]*auth.Auth, error) {

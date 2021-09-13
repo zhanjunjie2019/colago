@@ -1,12 +1,12 @@
 package main
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/protoactor"
-	"e.coding.net/double-j/ego/colago/common/sentinel"
-	"e.coding.net/double-j/ego/colago/common/skywalking"
-	"e.coding.net/double-j/ego/colago/samples/test/testcase"
 	"fmt"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/common/protoactor"
+	"github.com/zhanjunjie2019/colago/common/sentinel"
+	"github.com/zhanjunjie2019/colago/common/skywalking"
+	"github.com/zhanjunjie2019/colago/samples/test/testcase"
 )
 
 func init() {

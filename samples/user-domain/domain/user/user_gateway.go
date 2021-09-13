@@ -1,8 +1,8 @@
 package user
 
 import (
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/account"
 	"golang.org/x/net/context"
 )
 

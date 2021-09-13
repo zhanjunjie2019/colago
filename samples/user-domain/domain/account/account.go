@@ -1,7 +1,7 @@
 package account
 
 import (
-	"e.coding.net/double-j/ego/colago/common/domain"
+	"github.com/zhanjunjie2019/colago/common/domain"
 )
 
 type AccountType uint8

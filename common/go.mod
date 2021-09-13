@@ -1,4 +1,4 @@
-module e.coding.net/double-j/ego/colago/common
+module github.com/zhanjunjie2019/colago/common
 
 go 1.16
 

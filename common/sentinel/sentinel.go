@@ -1,11 +1,11 @@
 package sentinel
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
 	"fmt"
 	sentinel "github.com/alibaba/sentinel-golang/api"
 	"github.com/alibaba/sentinel-golang/core/circuitbreaker"
 	"github.com/alibaba/sentinel-golang/core/hotspot"
+	"github.com/zhanjunjie2019/colago/common/ioc"
 )
 
 func init() {

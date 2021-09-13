@@ -1,8 +1,8 @@
 package po
 
 import (
-	"e.coding.net/double-j/ego/colago/common/model"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/account"
+	"github.com/zhanjunjie2019/colago/common/model"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/account"
 	"strconv"
 )
 

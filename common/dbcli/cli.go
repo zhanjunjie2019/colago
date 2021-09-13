@@ -1,7 +1,7 @@
 package dbcli
 
 import (
-	"e.coding.net/double-j/ego/colago/common/model"
+	"github.com/zhanjunjie2019/colago/common/model"
 	"gorm.io/gorm"
 	"sync/atomic"
 )

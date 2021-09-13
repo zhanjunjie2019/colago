@@ -1,4 +1,4 @@
-module e.coding.net/double-j/ego/colago/samples/shared
+module github.com/zhanjunjie2019/colago/samples/shared
 
 go 1.16
 

@@ -1,17 +1,17 @@
 package main
 
 import (
-	"e.coding.net/double-j/ego/colago/common/conf"
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	_ "e.coding.net/double-j/ego/colago/common/postgres"
-	"e.coding.net/double-j/ego/colago/common/protoactor"
-	"e.coding.net/double-j/ego/colago/common/sentinel"
-	"e.coding.net/double-j/ego/colago/common/skywalking"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/app/executor"
-	_ "e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/gatewayimpl"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
+	"github.com/zhanjunjie2019/colago/common/conf"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	_ "github.com/zhanjunjie2019/colago/common/postgres"
+	"github.com/zhanjunjie2019/colago/common/protoactor"
+	"github.com/zhanjunjie2019/colago/common/sentinel"
+	"github.com/zhanjunjie2019/colago/common/skywalking"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/app/executor"
+	_ "github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/gatewayimpl"
 	"time"
 )
 

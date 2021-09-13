@@ -1,7 +1,7 @@
 package role
 
 import (
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"golang.org/x/net/context"
 )
 

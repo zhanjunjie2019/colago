@@ -1,10 +1,10 @@
 package testcase
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	authclient "e.coding.net/double-j/ego/colago/samples/auth-client"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
 	"fmt"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	authclient "github.com/zhanjunjie2019/colago/samples/auth-client"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"golang.org/x/net/context"
 	"time"
 )

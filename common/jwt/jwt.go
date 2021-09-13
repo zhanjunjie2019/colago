@@ -1,9 +1,9 @@
 package jwt
 
 import (
-	"e.coding.net/double-j/ego/colago/common/model"
 	"encoding/json"
 	"github.com/cristalhq/jwt"
+	"github.com/zhanjunjie2019/colago/common/model"
 )
 
 func JwtVerify(bearerToken string, salt string) (*model.TokenData, error) {

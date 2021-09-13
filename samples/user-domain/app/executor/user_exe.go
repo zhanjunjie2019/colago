@@ -1,16 +1,16 @@
 package executor
 
 import (
-	"e.coding.net/double-j/ego/colago/common/ioc"
-	"e.coding.net/double-j/ego/colago/common/jwt"
-	"e.coding.net/double-j/ego/colago/common/skywalking"
-	"e.coding.net/double-j/ego/colago/samples/shared/client"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/domain/user"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/convertor"
-	"e.coding.net/double-j/ego/colago/samples/user-domain/infrastructure/repo"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/cluster"
+	"github.com/zhanjunjie2019/colago/common/ioc"
+	"github.com/zhanjunjie2019/colago/common/jwt"
+	"github.com/zhanjunjie2019/colago/common/skywalking"
+	"github.com/zhanjunjie2019/colago/samples/shared/client"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/user"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/convertor"
+	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/repo"
 )
 
 var userAppExe *UserAppExe
