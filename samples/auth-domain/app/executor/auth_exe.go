@@ -12,19 +12,23 @@ import (
 	"github.com/AsynkronIT/protoactor-go/cluster"
 )
 
+var authAppExe *AuthAppExe
+
 func NewAuthAppExe() client.Auth {
-	exe := new(AuthAppExe)
-	err := ioc.GetContainer().Invoke(func(
-		userGateway user.UserGateway,
-		tenantRepo *repo.TenantRepo) {
-		exe.userGateway = userGateway
-		exe.tenantRepo = tenantRepo
-	})
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
+	if authAppExe == nil {
+		authAppExe = new(AuthAppExe)
+		err := ioc.GetContainer().Invoke(func(
+			userGateway user.UserGateway,
+			tenantRepo *repo.TenantRepo) {
+			authAppExe.userGateway = userGateway
+			authAppExe.tenantRepo = tenantRepo
+		})
+		if err != nil {
+			fmt.Println(err.Error())
+			panic(err)
+		}
 	}
-	return exe
+	return authAppExe
 }
 
 type AuthAppExe struct {

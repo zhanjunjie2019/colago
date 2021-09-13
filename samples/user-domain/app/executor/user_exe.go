@@ -13,19 +13,23 @@ import (
 	"github.com/AsynkronIT/protoactor-go/cluster"
 )
 
+var userAppExe *UserAppExe
+
 func NewUserAppExe() client.User {
-	exe := new(UserAppExe)
-	err := ioc.GetContainer().Invoke(func(
-		userService *user.UserService,
-		tenantRepo *repo.TenantRepo) {
-		exe.userService = userService
-		exe.tenantRepo = tenantRepo
-	})
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
+	if userAppExe == nil {
+		userAppExe = new(UserAppExe)
+		err := ioc.GetContainer().Invoke(func(
+			userService *user.UserService,
+			tenantRepo *repo.TenantRepo) {
+			userAppExe.userService = userService
+			userAppExe.tenantRepo = tenantRepo
+		})
+		if err != nil {
+			fmt.Println(err.Error())
+			panic(err)
+		}
 	}
-	return exe
+	return userAppExe
 }
 
 type UserAppExe struct {
