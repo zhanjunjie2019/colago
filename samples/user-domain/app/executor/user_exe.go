@@ -1,12 +1,12 @@
 package executor
 
 import (
+	"context"
 	"fmt"
 	"github.com/AsynkronIT/protoactor-go/actor"
 	"github.com/AsynkronIT/protoactor-go/cluster"
 	"github.com/zhanjunjie2019/colago/common/ioc"
 	"github.com/zhanjunjie2019/colago/common/jwt"
-	"github.com/zhanjunjie2019/colago/common/skywalking"
 	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/user"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/convertor"
@@ -52,14 +52,8 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
-		return cmd.Dto.TraceId, nil
-	})
-	defer func() {
-		span.End(err)
-	}()
 	response := new(client.UserResponse)
-	err = u.tenantRepo.TenantInitAction(cmd.TenantId)
+	err := u.tenantRepo.TenantInitAction(cmd.TenantId)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -74,20 +68,14 @@ func (u *UserAppExe) TenantInitAction(cmd *client.UserTenantInitCmd, context clu
 	return response, nil
 }
 
-func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, context cluster.GrainContext) (*client.UserResponse, error) {
+func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, ctx cluster.GrainContext) (*client.UserResponse, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
-		return cmd.Dto.TraceId, nil
-	})
-	defer func() {
-		span.End(err)
-	}()
 	response := new(client.UserResponse)
-	entity, err := convertor.UserCreateDtoToUserEntity(span.Ctx(), cmd)
+	entity, err := convertor.UserCreateDtoToUserEntity(context.Background(), cmd)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,
@@ -113,23 +101,17 @@ func (u *UserAppExe) CreateUserAction(cmd *client.CreateUserCmd, context cluster
 	return response, nil
 }
 
-func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, context cluster.GrainContext) (*client.UserLoginResponse, error) {
+func (u *UserAppExe) LoginAction(cmd *client.UserLoginCmd, ctx cluster.GrainContext) (*client.UserLoginResponse, error) {
 	defer func() {
 		if err := recover(); err != nil {
 			fmt.Println(err)
 		}
 	}()
-	span, err := skywalking.NewRootSpan("User", func(key string) (string, error) {
-		return cmd.Dto.TraceId, nil
-	})
-	defer func() {
-		span.End(err)
-	}()
 	dto := cmd.Dto
 	key := cmd.AccKey
 	password := cmd.Password
 	response := new(client.UserLoginResponse)
-	token, err := u.userService.LoginAction(span.Ctx(), dto, key, password)
+	token, err := u.userService.LoginAction(context.Background(), dto, key, password)
 	if err != nil {
 		response.Rsp = &client.Response{
 			Success:    false,

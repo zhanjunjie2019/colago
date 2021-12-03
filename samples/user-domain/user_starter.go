@@ -8,7 +8,6 @@ import (
 	_ "github.com/zhanjunjie2019/colago/common/postgres"
 	"github.com/zhanjunjie2019/colago/common/protoactor"
 	"github.com/zhanjunjie2019/colago/common/sentinel"
-	"github.com/zhanjunjie2019/colago/common/skywalking"
 	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/app/executor"
 	_ "github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/gatewayimpl"
@@ -34,18 +33,10 @@ func main() {
 		},
 	)
 
-	err := skywalking.NewGlobalTracer("user-service", "127.0.0.1:11800")
-	if err != nil {
-		fmt.Println(err.Error())
-		panic(err)
-	}
-
-	err = ioc.GetContainer().Invoke(func(
-		sentFilter *sentinel.SentinelFilter,
-		skyFilter *skywalking.SkyFilter) {
+	err := ioc.GetContainer().Invoke(func(
+		sentFilter *sentinel.SentinelFilter) {
 		protoactor.InitClientFilters(
 			sentFilter,
-			skyFilter,
 		)
 	})
 

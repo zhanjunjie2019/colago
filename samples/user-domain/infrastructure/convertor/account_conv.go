@@ -1,10 +1,10 @@
 package convertor
 
 import (
+	"context"
 	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/account"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/repo/po"
-	"golang.org/x/net/context"
 )
 
 func UserCreateDtoToAccountEntity(ctx context.Context, cmd *client.CreateUserCmd) (*account.Account, error) {

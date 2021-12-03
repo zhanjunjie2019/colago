@@ -1,8 +1,8 @@
 package user
 
 import (
+	"context"
 	"github.com/zhanjunjie2019/colago/samples/shared/client"
-	"golang.org/x/net/context"
 )
 
 type UserGateway interface {

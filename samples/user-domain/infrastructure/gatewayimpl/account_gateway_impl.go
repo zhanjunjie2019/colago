@@ -1,12 +1,12 @@
 package gatewayimpl
 
 import (
+	"context"
 	"github.com/zhanjunjie2019/colago/common/ioc"
 	"github.com/zhanjunjie2019/colago/samples/shared/client"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/domain/account"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/convertor"
 	"github.com/zhanjunjie2019/colago/samples/user-domain/infrastructure/repo"
-	"golang.org/x/net/context"
 )
 
 func init() {

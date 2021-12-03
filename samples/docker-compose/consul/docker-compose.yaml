@@ -1,73 +1,48 @@
 version: '3'
 
 services:
-  consul-ui1:
-    image: consul:latest
-    container_name: consul-ui1
-    volumes:
-      - '/d/docker-root/data/consul/data-ui1:/tmp/consul'
-    networks:
-      - custom_net
-    restart: always
+  consul-ui:
+    image: 'consul:latest'
+    container_name: 'consul-ui'
     ports:
-      - 8500:8500
-    command: agent -server -ui -client=0.0.0.0 -retry-join=consul-ui2 -bootstrap-expect=3 -node=consul-ui1 -datacenter=dc1 -data-dir /tmp/consul
-  consul1-1: 
-    image: consul:latest
-    container_name: consul1-1
-    volumes:
-      - '/d/docker-root/data/consul/data-consul1-1:/tmp/consul'
+      - '8500:8500'
+    command: 'agent -server -ui -client=0.0.0.0 -node=consul-ui -data-dir /tmp/consul'
     networks:
       - custom_net
-    restart: always
-    command: agent -server -client=0.0.0.0 -retry-join=consul-ui1 -node=consul1-1 -datacenter=dc1 -data-dir /tmp/consul
-    depends_on:
-      - consul-ui1
-  consul1-2: 
-    image: consul:latest
-    container_name: consul1-2
     volumes:
-      - '/d/docker-root/data/consul/data-consul1-2:/tmp/consul'
-    networks:
-      - custom_net
-    restart: always
-    command: agent -server -client=0.0.0.0 -retry-join=consul-ui1 -node=consul1-2 -datacenter=dc1 -data-dir /tmp/consul
-    depends_on:
-      - consul-ui1
-    
-  consul-ui2:
-    image: consul:latest
-    container_name: consul-ui2
-    volumes:
-      - '/d/docker-root/data/consul/data-ui2:/tmp/consul'
-    networks:
-      - custom_net
-    restart: always
+      - './data/consul-ui:/tmp/consul'
+
+  postgres-master:
+    image: 'bitnami/postgresql'
+    container_name: 'postgres-master'
+    environment:
+      - 'TZ=Asia/Shanghai'
+      - 'POSTGRES_USER=root'
+      - 'POSTGRES_PASSWORD=123456'
+      - 'POSTGRES_DB=colago'
+      - 'POSTGRESQL_REPLICATION_MODE=master'
+      - 'POSTGRESQL_REPLICATION_USER=colago'
+      - 'POSTGRESQL_REPLICATION_PASSWORD=colago'
     ports:
-      - 8501:8500
-    command: agent -server -ui -client=0.0.0.0 -retry-join=consul-ui1 -bootstrap-expect=3 -node=consul-ui2 -datacenter=dc2 -data-dir /tmp/consul
-  consul2-1: 
-    image: consul:latest
-    container_name: consul2-1
-    volumes:
-      - '/d/docker-root/data/consul/data-consul2-1:/tmp/consul'
+      - '5432:5432'
     networks:
       - custom_net
-    restart: always
-    command: agent -server -client=0.0.0.0 -retry-join=consul-ui2 -node=consul2-1 -datacenter=dc2 -data-dir /tmp/consul
-    depends_on:
-      - consul-ui2
-  consul2-2: 
-    image: consul:latest
-    container_name: consul2-2
     volumes:
-      - '/d/docker-root/data/consul/data-consul2-2:/tmp/consul'
+      - './data/postgres-master:/bitnami/postgresql'
+
+  otel-collector:
+    image: 'otel/opentelemetry-collector-contrib:latest'
+    command: ["--config=/etc/otel-collector-config.yaml", "--log-level=DEBUG"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./data/otel:/root/log
+    ports:
+      - "1888:1888"   # pprof extension
+      - "13133:13133" # health_check extension
+      - "4317"        # OTLP gRPC receiver
+      - "55670:55679" # zpages extension
     networks:
       - custom_net
-    restart: always
-    command: agent -server -client=0.0.0.0 -retry-join=consul-ui2 -node=consul2-2 -datacenter=dc2 -data-dir /tmp/consul
-    depends_on:
-      - consul-ui2
 
 networks:
   custom_net:
