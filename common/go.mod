@@ -8,13 +8,9 @@ require (
 	github.com/cristalhq/jwt v1.2.0
 	github.com/hashicorp/consul/api v1.9.1
 	go.opentelemetry.io/otel v1.0.1
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric v0.24.0
-	go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc v0.24.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.0.1
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.0.1
-	go.opentelemetry.io/otel/metric v0.24.0
 	go.opentelemetry.io/otel/sdk v1.0.1
-	go.opentelemetry.io/otel/sdk/metric v0.24.0
 	go.uber.org/dig v1.12.0
 	golang.org/x/net v0.0.0-20210405180319-a5a99cb37ef4
 	google.golang.org/grpc v1.41.0
